@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -34,16 +35,17 @@ public class Crawler implements WebSpider {
 	WebClient webClient = null;	
 	HtmlPage currentPage = null;
 	Scanner scanner = new Scanner(System.in);
-	SeedManager mgr = new SeedManager();
+	SeedProcessor proc = new SeedProcessor();	
+	private static final Logger log = Logger.getLogger(Crawler.class.getName());
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {		
 		Crawler crawler = new Crawler();
 		crawler.initializeWebClient();
 		crawler.consumeInputs();
 		if(crawler.canCrawl())
 			crawler.run();
 		else
-			System.out.println("Unable to run the crawler. Please verify inputs.");
+			log.severe("Unable to run the crawler. Please verify inputs.");
 		crawler.closeWebClient();
 	}
 	
@@ -65,7 +67,7 @@ public class Crawler implements WebSpider {
 		extractAndSeedLinks(pageWithMsgs);		
 		// mgr.printStatus();
 		// TODO : Place download action else where if possible. 
-		mgr.downloadSeeds(); 			
+		proc.downloadSeeds(); 			
 	}
 	
 	/** 
@@ -82,7 +84,7 @@ public class Crawler implements WebSpider {
 		    	if(child instanceof HtmlAnchor)	{	    		
 		    		String href = ((HtmlAnchor) child).getHrefAttribute();
 		    		String decodedHref = sandbox.decodeURIComponent(page, href); 
-		    		mgr.addNewSeed(decodedHref, this.urlSuffix);		    		
+		    		proc.addNewSeed(decodedHref, this.urlSuffix);		    		
 		    	}
 		    }		    		    
 		}	

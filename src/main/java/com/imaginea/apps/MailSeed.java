@@ -24,6 +24,10 @@ public class MailSeed {
 		return StringConstants.BASEURL + urlSuffix + "/raw/"+id;	
 	}
 	
+	public String getUrlSuffix(){
+		return urlSuffix;
+	}
+	
 	@Override
 	public String toString() {	
 		if(this.id != null && this.urlSuffix != null)

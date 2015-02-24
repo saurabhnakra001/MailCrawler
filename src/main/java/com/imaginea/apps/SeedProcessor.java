@@ -1,16 +1,19 @@
 package com.imaginea.apps;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 /**
  * @author vamsi emani
  * 
  * Controls the processing of seeds with a queue.
  */
-public class SeedManager {
+public class SeedProcessor {
 	
 	/** Use a blocking queue to enable multi-threading in future and to withstand internet connection loss **/
 	LinkedBlockingQueue<MailSeed> queue = new LinkedBlockingQueue<MailSeed>();
+	
+	private static final Logger log = Logger.getLogger(SeedProcessor.class.getSimpleName());
 	
 	public void addNewSeed(String extracted, String suffix){
 		String mailseed = extracted;
@@ -26,9 +29,9 @@ public class SeedManager {
 	public void downloadSeeds(){
 		int i = 1;
 		while(!queue.isEmpty()){
-			String fileName = "msg-"+i;
+			String fileName = "msg-"+queue.poll().getUrlSuffix() + i;
 			String url = queue.poll().getDownloadUrl();
-			System.out.println("Downloading from "+url+ " to "+fileName);
+			log.info("Downloading from :\n\t"+url+ " to Output/"+fileName);
 			Utility.download(url, fileName);			
 			i++;
 		}
