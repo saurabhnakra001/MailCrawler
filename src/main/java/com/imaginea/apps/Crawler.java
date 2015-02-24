@@ -6,9 +6,6 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Scanner;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
@@ -48,11 +45,13 @@ public class Crawler {
 		crawler.closeWebClient();
 	}
 	
+	/**
+	 * Reads input from command line.
+	 */
 	public void supplyInputs(){
 		String year = readInput("Enter year in YYYY format : ");		
 		String month = readInput("Enter month in MM format : ");
-		this.urlSuffix = year + month + ".mbox";		
-		
+		this.urlSuffix = year + month + ".mbox";				
 	}
 	
 	public void run() throws IOException{			
@@ -62,7 +61,6 @@ public class Crawler {
 		try {
 			Thread.currentThread().sleep(3000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		HtmlTable msgsTable = (HtmlTable) pageWithMsgs.getHtmlElementById("msglist");		
