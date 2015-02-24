@@ -47,7 +47,17 @@ public class Utility {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-        
+		}        
     }
+	
+	/**
+	 * Halt execution for specified time in ms,
+	 */
+	public static void sleep(int num){
+		try {
+			Thread.currentThread().sleep(num);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }

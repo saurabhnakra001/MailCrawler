@@ -27,7 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
  * on the html page by ajax..   
  */
 
-public class Crawler {
+public class Crawler implements WebSpider {
 
 	JSSandbox sandbox = new JSSandbox();
 	String urlSuffix;	
@@ -39,7 +39,7 @@ public class Crawler {
 	public static void main(String[] args) throws IOException {
 		Crawler crawler = new Crawler();
 		crawler.initializeWebClient();
-		crawler.supplyInputs();
+		crawler.consumeInputs();
 		if(crawler.canCrawl())
 			crawler.run();
 		crawler.closeWebClient();
@@ -48,27 +48,22 @@ public class Crawler {
 	/**
 	 * Reads input from command line.
 	 */
-	public void supplyInputs(){
+	public void consumeInputs(){
 		String year = readInput("Enter year in YYYY format : ");		
 		String month = readInput("Enter month in MM format : ");
 		this.urlSuffix = year + month + ".mbox";				
 	}
 	
-	public void run() throws IOException{			
+	public void run(){			
 		initializeWebClient();		
 		if(this.currentPage == null) return;
 		HtmlPage pageWithMsgs =  sandbox.loadMessages(this.currentPage, urlSuffix); 		
-		try {
-			Thread.currentThread().sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Utility.sleep(3000);
 		HtmlTable msgsTable = (HtmlTable) pageWithMsgs.getHtmlElementById("msglist");		
 		extractAndSeedLinks(pageWithMsgs);		
 		// mgr.printStatus();
 		// TODO : Place download action else where if possible. 
-		mgr.downloadSeeds(); 
-			
+		mgr.downloadSeeds(); 			
 	}
 	
 	/** 

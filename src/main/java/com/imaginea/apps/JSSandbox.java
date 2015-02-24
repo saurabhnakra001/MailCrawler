@@ -19,7 +19,7 @@ public class JSSandbox {
 	public HtmlPage loadMessages(HtmlPage page, String urlSuffix){
 		String snippet = "loadBrowser ('/mod_mbox/maven-users/"+urlSuffix+"');";
 		ScriptResult result = page.executeJavaScript(snippet);
-		System.out.println("Are mail messages loaded : "+ result.getJavaScriptResult());
+		System.out.println("Mail messages loaded : "+ result.getJavaScriptResult());
 		return (HtmlPage) result.getNewPage();
 	}
 	
