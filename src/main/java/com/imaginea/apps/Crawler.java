@@ -42,6 +42,8 @@ public class Crawler implements WebSpider {
 		crawler.consumeInputs();
 		if(crawler.canCrawl())
 			crawler.run();
+		else
+			System.out.println("Unable to run the crawler. Please verify inputs.");
 		crawler.closeWebClient();
 	}
 	
@@ -49,8 +51,8 @@ public class Crawler implements WebSpider {
 	 * Reads input from command line.
 	 */
 	public void consumeInputs(){
-		String year = readInput("Enter year in YYYY format : ");		
-		String month = readInput("Enter month in MM format : ");
+		String year = readInput("Enter year in YYYY format (example - 2014) : ");		
+		String month = readInput("Enter month in MM format (example - 02) : ");
 		this.urlSuffix = year + month + ".mbox";				
 	}
 	
