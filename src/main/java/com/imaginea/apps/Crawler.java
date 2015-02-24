@@ -67,7 +67,7 @@ public class Crawler {
 		}
 		HtmlTable msgsTable = (HtmlTable) pageWithMsgs.getHtmlElementById("msglist");		
 		extractAndSeedLinks(pageWithMsgs);		
-		//mgr.printStatus();
+		// mgr.printStatus();
 		// TODO : Place download action else where if possible. 
 		mgr.downloadSeeds(); 
 			

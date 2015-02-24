@@ -8,4 +8,5 @@ package com.imaginea.apps;
 public class StringConstants {
 
 	public static final String BASEURL = "http://mail-archives.apache.org/mod_mbox/maven-users/";
+	
 }

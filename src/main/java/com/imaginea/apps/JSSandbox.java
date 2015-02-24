@@ -32,5 +32,5 @@ public class JSSandbox {
 		ScriptResult result = page.executeJavaScript(snippet);
 		String res = result.getJavaScriptResult().toString();
 		return res;
-	}
+	} 
 }

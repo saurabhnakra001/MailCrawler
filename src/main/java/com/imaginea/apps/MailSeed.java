@@ -2,6 +2,9 @@ package com.imaginea.apps;
 
 /**
  * @author vamsi emani
+ * 
+ * Mail seed object represents the mail link on the maven page 
+ * that is to be extracted and downloaded.
  */
 
 public class MailSeed {

@@ -35,6 +35,6 @@ public class SeedManager {
 	}
 	
 	public void printStatus(){
-		System.out.println("Unvisited seeds : "+ queue);
+		System.out.println("seeds : "+ queue);
 	}
 }

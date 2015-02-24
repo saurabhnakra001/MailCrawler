@@ -18,9 +18,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 /**
- * 
  * @author vamsi emani
- *
+ * Utility and helper methods here. 
  */
 public class Utility {
 
