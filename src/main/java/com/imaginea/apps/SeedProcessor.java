@@ -1,5 +1,6 @@
 package com.imaginea.apps;
 
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
@@ -29,10 +30,15 @@ public class SeedProcessor {
 	public void downloadSeeds(){
 		int i = 1;
 		while(!queue.isEmpty()){
-			String fileName = "msg-"+queue.poll().getUrlSuffix() + i+".txt";
-			String url = queue.poll().getDownloadUrl();
-			log.info("Downloading from :\n\t"+url+ " to Output/"+fileName);
-			Utility.download(url, fileName);			
+			MailSeed seed = queue.poll();
+			String fileName = "msg-"+seed.getUrlSuffix() + i+".txt";
+			String url = seed.getDownloadUrl();
+			log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
+			try {
+				Utility.download(url, fileName);
+			} catch (Exception e) {
+				log.severe("Unable to download : "+url);
+			}			
 			i++;
 		}
 	}
