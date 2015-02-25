@@ -29,7 +29,7 @@ public class SeedProcessor {
 	public void downloadSeeds(){
 		int i = 1;
 		while(!queue.isEmpty()){
-			String fileName = "msg-"+queue.poll().getUrlSuffix() + i;
+			String fileName = "msg-"+queue.poll().getUrlSuffix() + i+".txt";
 			String url = queue.poll().getDownloadUrl();
 			log.info("Downloading from :\n\t"+url+ " to Output/"+fileName);
 			Utility.download(url, fileName);			
