@@ -1,1 +1,1 @@
-java -jar target/crawler.jar
+java -jar build/crawler.jar

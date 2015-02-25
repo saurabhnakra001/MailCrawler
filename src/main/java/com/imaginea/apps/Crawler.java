@@ -59,7 +59,8 @@ public class Crawler implements WebSpider {
 	}
 	
 	public void run(){			
-		initializeWebClient();		
+		log.info("Running crawler on : " + StringConstants.BASEURL);
+		initializeWebClient();				
 		if(this.currentPage == null) return;
 		HtmlPage pageWithMsgs =  sandbox.loadMessages(this.currentPage, urlSuffix); 		
 		Utility.sleep(3000);
