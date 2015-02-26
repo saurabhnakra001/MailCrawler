@@ -1,13 +1,20 @@
 package com.imaginea.apps;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 /**
  * @author vamsi emani
  * Used to speed up the download process.
  */
-public class DownloadWorker implements Runnable{
+public class DownloadWorker implements Callable<String>{
 
 	BlockingQueue<MailSeed> queue;
 	
@@ -16,25 +23,34 @@ public class DownloadWorker implements Runnable{
 	public DownloadWorker(BlockingQueue<MailSeed> queue) {
 		this.queue = queue;
 	}
-	
-	public void run() {	
-		int i = 1;
+		
+	private synchronized void download(String urlStr, String fileName) throws IOException{
+		URL url;		
+		new File("Output").mkdir();
+		url = new URL(urlStr);
+		ReadableByteChannel rbc = Channels.newChannel(url.openStream());							
+		FileOutputStream fos = new FileOutputStream(new File("Output" + File.separator + fileName));
+		fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+		fos.close();
+		rbc.close();
+	}
+
+	public String call() throws Exception {		
 		while(!queue.isEmpty()){			
 			try {
-				MailSeed seed = queue.take();
-				String fileName = "msg-"+seed.getUrlSuffix() + i+".txt";
+				MailSeed seed = queue.take();				
+				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size())+1+".txt";
 				String url = seed.getDownloadUrl();
 				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
 				try {
-					Utility.download(url, fileName);
+					download(url, fileName);
 				} catch (Exception e) {
 					log.severe("Unable to download : "+url);
-				}			
-				i++;
+				}							
 			} catch (InterruptedException e1) {				
 				e1.printStackTrace();
 			}			
 		}
+		return Thread.currentThread().getName()+" completed..";
 	}
-
 }

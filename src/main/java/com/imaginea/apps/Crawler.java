@@ -76,8 +76,9 @@ public class Crawler extends AbstractCrawler {
 		    for ( DomElement child : cell.getChildElements()){
 		    	if(child instanceof HtmlAnchor)	{	    		
 		    		String href = ((HtmlAnchor) child).getHrefAttribute();
-		    		String decodedHref = sandbox.decodeURIComponent(currentPage, href); 		    		
-		    		links.add(MailSeed.newFor(decodedHref, this.urlSuffix));		    		
+		    		String decodedHref = sandbox.decodeURIComponent(currentPage, href);
+		    		if(decodedHref.startsWith("ajax"))
+		    			links.add(MailSeed.newFor(decodedHref, this.urlSuffix));		    		
 		    	}
 		    }		    		    
 		}	

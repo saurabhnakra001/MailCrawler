@@ -21,7 +21,7 @@ public abstract class AbstractCrawler implements WebSpider {
 
 	String urlSuffix;	
 	
-	private static final int DOWNLOAD_WORKER_THREADS = 1;
+	private static final int DOWNLOAD_WORKER_THREADS = 10;
 	
 	/**
 	 * Reads input from command line.

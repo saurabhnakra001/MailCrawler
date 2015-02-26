@@ -30,19 +30,7 @@ public class Utility {
 		while ((b = is.read()) != -1){
 		    System.out.print((char)b);
 		}
-	}
-		
-	/** Using nio - downloads the url file content to output folder */
-	public static void download(String urlStr, String fileName) throws IOException {
-        URL url;		
-		new File("Output").mkdir();
-		url = new URL(urlStr);
-		ReadableByteChannel rbc = Channels.newChannel(url.openStream());							
-	    FileOutputStream fos = new FileOutputStream(new File("Output" + File.separator + fileName));
-	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-	    fos.close();
-	    rbc.close();		        
-    }
+	}			
 	
 	/**
 	 * Halt execution for specified time in ms,
