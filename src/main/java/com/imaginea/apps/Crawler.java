@@ -57,7 +57,7 @@ public class Crawler extends AbstractCrawler {
 			DOWNLOAD_WORKER_THREADS = Integer.parseInt(readInput(StringConstants.NUM_DOWNLOAD_WORKERS));
 		}catch(NumberFormatException e){
 			log.info(StringConstants.INVALID_NUM_WORKERS);
-			DOWNLOAD_WORKER_THREADS = 1;
+			DOWNLOAD_WORKER_THREADS = 1; 			
 		}
 	}
 	

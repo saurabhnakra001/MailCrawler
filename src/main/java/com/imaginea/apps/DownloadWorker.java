@@ -39,7 +39,7 @@ public class DownloadWorker implements Callable<String>{
 		while(!queue.isEmpty()){			
 			try {
 				MailSeed seed = queue.take();				
-				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size())+1+".txt";
+				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size()+1)+".txt";
 				String url = seed.getDownloadUrl();
 				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
 				try {
