@@ -3,6 +3,8 @@ package com.imaginea.apps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -26,16 +28,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
  * A maven mail chain crawler that extracts links from page source and downloads the mails.
  * Also has the ability to invoke browser js to intrepret and extract mail links generated 
  * on the html page by ajax..   
+ * 
+ * Refer http://mail-archives.apache.org/mod_mbox/maven-users/201412.mbox/browser 
  */
 
-public class Crawler implements WebSpider {
+public class Crawler extends AbstractCrawler {
 
-	JSSandbox sandbox = new JSSandbox();
-	String urlSuffix;	
+	JSSandbox sandbox = new JSSandbox();	
 	WebClient webClient = null;	
-	HtmlPage currentPage = null;
-	Scanner scanner = new Scanner(System.in);
-	SeedProcessor proc = new SeedProcessor();	
+	HtmlPage currentPage = null;				
 	private static final Logger log = Logger.getLogger(Crawler.class.getName());
 	
 	public static void main(String[] args) throws IOException {		
@@ -47,58 +48,45 @@ public class Crawler implements WebSpider {
 		else
 			log.severe("Unable to run the crawler. Please verify inputs.");
 		crawler.closeWebClient();
-	}
+	}			
+	
 	
 	/**
-	 * Reads input from command line.
+	 * Process the web page to load the list of mail messages loaded by js. 
 	 */
-	public void consumeInputs(){
-		String year = readInput("Enter year in YYYY format (example - 2014) : ");		
-		String month = readInput("Enter month in MM format (example - 02) : ");
-		this.urlSuffix = year + month + ".mbox";				
+	@Override
+	public void processWebPage() {
+		if(this.currentPage == null) 
+			return;
+		log.info("Loading mail messages on : "+currentPage);
+		currentPage =  sandbox.loadMessages(this.currentPage, urlSuffix); 		
+		Utility.sleep(3000);		
 	}
-	
-	public void run(){			
-		log.info("Running crawler on : " + StringConstants.BASEURL);
-		initializeWebClient();				
-		if(this.currentPage == null) return;
-		HtmlPage pageWithMsgs =  sandbox.loadMessages(this.currentPage, urlSuffix); 		
-		Utility.sleep(3000);
-		HtmlTable msgsTable = (HtmlTable) pageWithMsgs.getHtmlElementById("msglist");		
-		extractAndSeedLinks(pageWithMsgs);		
-		// mgr.printStatus();
-		// TODO : Place download action else where if possible. 
-		proc.downloadSeeds(); 			
-	}
-	
+
 	/** 
-	 * Parses the htmlpage's messages list table to extract mail links 
-	 * and create seed objects out of the links
-	 * For example : Refer http://mail-archives.apache.org/mod_mbox/maven-users/201412.mbox/browser 
+	 * Returns a list of mail links extracted from the webpage.  
 	 */
-	public void extractAndSeedLinks(HtmlPage page){
-		HtmlTable msgsTable = (HtmlTable) page.getHtmlElementById("msglist");	
+	@Override
+	public List<MailSeed> extractLinks() {	
+		List<MailSeed> links = new ArrayList<MailSeed>();
+		HtmlTable msgsTable = (HtmlTable) currentPage.getHtmlElementById("msglist");	
 		int MAIL_SUBJECT = 1;
 		for (final HtmlTableRow row : msgsTable.getRows()) {	
 		    HtmlTableCell cell = row.getCell(MAIL_SUBJECT);
 		    for ( DomElement child : cell.getChildElements()){
 		    	if(child instanceof HtmlAnchor)	{	    		
 		    		String href = ((HtmlAnchor) child).getHrefAttribute();
-		    		String decodedHref = sandbox.decodeURIComponent(page, href); 
-		    		proc.addNewSeed(decodedHref, this.urlSuffix);		    		
+		    		String decodedHref = sandbox.decodeURIComponent(currentPage, href); 		    		
+		    		links.add(MailSeed.newFor(decodedHref, this.urlSuffix));		    		
 		    	}
 		    }		    		    
 		}	
-	}	
-	
-	public String readInput(Object msg){
-		System.out.println(msg);
-		return scanner.nextLine();
+		return links;
 	}
 	
 	/**
-	 * Sort of a proxy that provides ability to 
-	 * execute browser js without actually opening a browser..
+	 * A headless browser (not a browser) that provides ability to 
+	 * execute browser js ..
 	 */
 	public void initializeWebClient(){
 		webClient = new WebClient(BrowserVersion.CHROME);		
@@ -110,21 +98,31 @@ public class Crawler implements WebSpider {
 	
 	/**
 	* Gets the list of anchors on a given html page
+	 * @throws IOException 
 	*/
-	public List<HtmlAnchor> getAnchors(String url){
+	public List<HtmlAnchor> getAnchors(String url) throws IOException{
 		HtmlPage mainPage = null;
+		List anchors = null;
 		try {
 			mainPage = webClient.getPage(url);
-		} catch (FailingHttpStatusCodeException e) {
-			e.printStackTrace();
+			anchors = mainPage.getAnchors();
+		}catch(UnknownHostException e){
+			log.severe("Cannot reach " + e.getMessage());
+			throw e;
+		}catch (FailingHttpStatusCodeException e) {
+			log.severe("Cannot reach " + e.getMessage());	
+			throw e;
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			log.severe("Incorrect url " + e.getMessage());	
+			throw e;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.severe(e.getMessage());	
+			throw e;
 		}		
-		return mainPage.getAnchors();	
+		return anchors;	
 	}
 	
+	@Override
 	public boolean canCrawl(){
 		return validateInput(urlSuffix+"/browser");
 	}
@@ -134,7 +132,12 @@ public class Crawler implements WebSpider {
 	 * exists on the main page or not. 
 	 */
 	public boolean validateInput(String relativeUrl) {			
-		List<HtmlAnchor> anchors = getAnchors(StringConstants.BASEURL); 		
+		List<HtmlAnchor> anchors = null; 
+		try{
+			anchors = getAnchors(StringConstants.BASEURL); 		
+		}catch(Exception e){
+			return false;
+		}
 		/** Iterate over the anchors in the base url to check if page with link exists or not **/
 		HtmlAnchor anchor = null;
 		boolean found = false;
@@ -144,7 +147,7 @@ public class Crawler implements WebSpider {
 		    if(href.equals(relativeUrl)){
 		    	try {
 					this.currentPage = anchor.click();
-					//HtmlUtility.printPage(p);
+					//Utility.printPage(p);
 					return true;
 				} catch (IOException e) {
 					e.printStackTrace();

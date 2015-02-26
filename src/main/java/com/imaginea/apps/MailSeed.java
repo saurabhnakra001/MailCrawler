@@ -28,6 +28,13 @@ public class MailSeed {
 		return urlSuffix;
 	}
 	
+	public static MailSeed newFor(String link, String suffix){
+		String id = link;
+		if(link.startsWith("ajax/"))
+			id = id.substring(id.indexOf("/")+1);					
+		return new MailSeed(id, suffix);
+	}
+	
 	@Override
 	public String toString() {	
 		if(this.id != null && this.urlSuffix != null)

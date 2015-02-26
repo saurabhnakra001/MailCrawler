@@ -15,4 +15,7 @@ public interface WebSpider {
 	
 	/** Any other validations for crawler **/
 	public boolean canCrawl();
+	
+	/** Implementation to download mail content in extracted link **/
+	public void download();
 }
