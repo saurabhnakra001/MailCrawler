@@ -1,2 +1,2 @@
-java -jar build/crawler.jar
+java -jar crawler.jar
 PAUSE
