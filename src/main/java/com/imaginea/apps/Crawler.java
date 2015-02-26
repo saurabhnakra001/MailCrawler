@@ -46,7 +46,7 @@ public class Crawler extends AbstractCrawler {
 		if(crawler.canCrawl())
 			crawler.run();
 		else
-			log.severe("Unable to run the crawler. Please verify inputs.");
+			log.severe("Unable to run the crawler. Please verify inputs or check your internet connection.");
 		crawler.closeWebClient();
 	}			
 	
