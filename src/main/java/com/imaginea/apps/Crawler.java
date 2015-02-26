@@ -46,10 +46,20 @@ public class Crawler extends AbstractCrawler {
 		if(crawler.canCrawl())
 			crawler.run();
 		else
-			log.severe("Unable to run the crawler. Please verify inputs or check your internet connection.");
+			log.severe(StringConstants.CANNOT_CRAWL);
 		crawler.closeWebClient();
 	}			
 	
+	@Override
+	public void consumeInputs() {
+		super.consumeInputs();
+		try{
+			DOWNLOAD_WORKER_THREADS = Integer.parseInt(readInput(StringConstants.NUM_DOWNLOAD_WORKERS));
+		}catch(NumberFormatException e){
+			log.info(StringConstants.INVALID_NUM_WORKERS);
+			DOWNLOAD_WORKER_THREADS = 1;
+		}
+	}
 	
 	/**
 	 * Process the web page to load the list of mail messages loaded by js. 
