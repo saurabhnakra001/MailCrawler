@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -32,6 +33,15 @@ public class Utility {
 		}
 	}			
 	
+	public static String decodeUrl(String encodedUrl){
+		String result = null;
+		try {
+			result = java.net.URLDecoder.decode(encodedUrl, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	/**
 	 * Halt execution for specified time in ms,
 	 */

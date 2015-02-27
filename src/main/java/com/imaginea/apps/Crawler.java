@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -36,7 +37,9 @@ public class Crawler extends AbstractCrawler {
 
 	JSSandbox sandbox = new JSSandbox();	
 	WebClient webClient = null;	
-	HtmlPage currentPage = null;				
+	HtmlPage currentPage = null;
+	private List<HtmlAnchor> hyperlinks;		
+	private List processedPages;
 	private static final Logger log = Logger.getLogger(Crawler.class.getName());
 	
 	public static void main(String[] args) throws IOException {		
@@ -66,33 +69,45 @@ public class Crawler extends AbstractCrawler {
 	 */
 	@Override
 	public void processWebPage() {
-		if(this.currentPage == null) 
-			return;
-		log.info("Loading mail messages on : "+currentPage);
-		currentPage =  sandbox.loadMessages(this.currentPage, urlSuffix); 		
-		Utility.sleep(3000);		
+		try {						
+			this.hyperlinks = getHyperlinks(getUrl());
+			this.processedPages = new ArrayList();			
+			this.processedPages.add("/mod_mbox/maven-users//"+getRelativeUrl());
+			this.processedPages.add("/mod_mbox/maven-users//"+getRelativeUrl()+"?0");
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}				
 	}
 
+	public String getRelativeUrl(){
+		return this.urlSuffix+"/thread";
+	}
+	
+	public String getUrl(){
+		return StringConstants.BASEURL+"/"+getRelativeUrl();
+	}
+	
 	/** 
 	 * Returns a list of mail links extracted from the webpage.  
 	 */
 	@Override
-	public List<MailSeed> extractLinks() {	
-		List<MailSeed> links = new ArrayList<MailSeed>();
-		HtmlTable msgsTable = (HtmlTable) currentPage.getHtmlElementById("msglist");	
-		int MAIL_SUBJECT = 1;
-		for (final HtmlTableRow row : msgsTable.getRows()) {	
-		    HtmlTableCell cell = row.getCell(MAIL_SUBJECT);
-		    for ( DomElement child : cell.getChildElements()){
-		    	if(child instanceof HtmlAnchor)	{	    		
-		    		String href = ((HtmlAnchor) child).getHrefAttribute();
-		    		String decodedHref = sandbox.decodeURIComponent(currentPage, href);
-		    		if(decodedHref.startsWith("ajax"))
-		    			links.add(MailSeed.newFor(decodedHref, this.urlSuffix));		    		
-		    	}
-		    }		    		    
-		}	
-		return links;
+	public List<MailSeed> extractLinks() {		
+		List<MailSeed> linksExtracted = new ArrayList<MailSeed>();
+		for(HtmlAnchor anchor : hyperlinks){
+			String href = anchor.getHrefAttribute();
+			if(href.startsWith("%3c")){
+				String decodedHref = Utility.decodeUrl(href);
+				linksExtracted.add(MailSeed.newFor(decodedHref, this.urlSuffix));
+			}
+			else if(href.contains(getRelativeUrl()) && !processedPages.contains(href))
+				try {
+					processedPages.add(href);
+					this.hyperlinks.addAll( ((HtmlPage) anchor.click()).getAnchors() );
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+		}		
+		return linksExtracted;
 	}
 	
 	/**
@@ -111,12 +126,12 @@ public class Crawler extends AbstractCrawler {
 	* Gets the list of anchors on a given html page
 	 * @throws IOException 
 	*/
-	public List<HtmlAnchor> getAnchors(String url) throws IOException{
-		HtmlPage mainPage = null;
+	public List<HtmlAnchor> getHyperlinks(String url) throws IOException{
+		HtmlPage page = null;
 		List anchors = null;
 		try {
-			mainPage = webClient.getPage(url);
-			anchors = mainPage.getAnchors();
+			page = webClient.getPage(url);			
+			anchors = new CopyOnWriteArrayList<HtmlAnchor>(page.getAnchors());			 
 		}catch(UnknownHostException e){
 			log.severe("Cannot reach " + e.getMessage());
 			throw e;
@@ -135,38 +150,25 @@ public class Crawler extends AbstractCrawler {
 	
 	@Override
 	public boolean canCrawl(){
-		return validateInput(urlSuffix+"/browser");
+		return validateInput(getRelativeUrl());
 	}
 	
 	/**
 	 * Validates whether the mail links for the specified month and year 
 	 * exists on the main page or not. 
 	 */
-	public boolean validateInput(String relativeUrl) {			
-		List<HtmlAnchor> anchors = null; 
+	public boolean validateInput(String relativeUrl) {	
+		boolean isValid = false;
 		try{
-			anchors = getAnchors(StringConstants.BASEURL); 		
+			HtmlPage mainPage = webClient.getPage(StringConstants.BASEURL);
+			HtmlPage childPage = webClient.getPage(getUrl());			
+			isValid = (mainPage != null) && (childPage != null);
+			if(isValid)
+				currentPage = childPage;			
 		}catch(Exception e){
-			return false;
+			log.severe("Incorrect input "+getUrl());
 		}
-		/** Iterate over the anchors in the base url to check if page with link exists or not **/
-		HtmlAnchor anchor = null;
-		boolean found = false;
-		for (int i = 0; i < anchors.size(); ++i){
-		    anchor = anchors.get(i);
-		    String href = anchor.getHrefAttribute();		    
-		    if(href.equals(relativeUrl)){
-		    	try {
-					this.currentPage = anchor.click();
-					//Utility.printPage(p);
-					return true;
-				} catch (IOException e) {
-					e.printStackTrace();
-					return false;
-				}
-		    }
-		}		
-		return false;		
+		return isValid;			
 	}
 
 }
