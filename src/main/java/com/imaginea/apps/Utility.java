@@ -42,6 +42,17 @@ public class Utility {
 		}
 		return result;
 	}
+	
+	public static String encodeUrl(String url){
+		String result = null;
+		try {
+			result = java.net.URLEncoder.encode(url, "UTF-8");
+		} catch (UnsupportedEncodingException e) {			
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	/**
 	 * Halt execution for specified time in ms,
 	 */

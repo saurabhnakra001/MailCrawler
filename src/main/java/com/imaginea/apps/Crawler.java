@@ -96,7 +96,7 @@ public class Crawler extends AbstractCrawler {
 		for(HtmlAnchor anchor : hyperlinks){
 			String href = anchor.getHrefAttribute();
 			if(href.startsWith("%3c")){
-				String decodedHref = Utility.decodeUrl(href);
+				String decodedHref = Utility.decodeUrl(Utility.encodeUrl(href));				
 				linksExtracted.add(MailSeed.newFor(decodedHref, this.urlSuffix));
 			}
 			else if(href.contains(getRelativeUrl()) && !processedPages.contains(href))
