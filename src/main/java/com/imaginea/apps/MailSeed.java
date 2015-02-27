@@ -11,6 +11,8 @@ public class MailSeed {
 	
 	String id, urlSuffix;
 	
+	boolean downloadFailed;
+	
 	public MailSeed(String id, String urlSuffix){
 		this.id = id;
 		this.urlSuffix = urlSuffix;
@@ -33,6 +35,14 @@ public class MailSeed {
 		if(link.startsWith("ajax/"))
 			id = id.substring(id.indexOf("/")+1);					
 		return new MailSeed(id, suffix);
+	}
+	
+	public void setDownloadFailed() {	
+		downloadFailed = true;
+	}
+	
+	public boolean isDownloadFailed(){
+		return downloadFailed == true;
 	}
 	
 	@Override

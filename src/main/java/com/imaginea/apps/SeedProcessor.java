@@ -58,7 +58,13 @@ public class SeedProcessor {
 		executorService.shutdown();			
 	}
 	
-	public void printStatus(){
-		System.out.println("seeds : "+ queue);
+	public List<MailSeed> getFailedSeeds(){
+		List failed = new ArrayList();
+		MailSeed[] seeds = (MailSeed[]) queue.toArray();
+		for (int i = 0; i < seeds.length; i++) {
+			if(seeds[i].isDownloadFailed())
+				failed.add(seeds[i]);
+		}
+		return failed;
 	}
 }

@@ -46,6 +46,7 @@ public class DownloadWorker implements Callable<String>{
 					download(url, fileName);
 				} catch (Exception e) {
 					log.severe("Unable to download : "+url);
+					seed.setDownloadFailed();
 				}							
 			} catch (InterruptedException e1) {				
 				e1.printStackTrace();
