@@ -32,8 +32,8 @@ public class SeedProcessor {
 			addSeed(seed);
 	}
 	
-	private List<Callable<String>> getWorkers(int number_of_workers){
-		List<Callable<String>> tasks = new ArrayList<Callable<String>>();
+	private List<Callable<DownloadRecord>> getWorkers(int number_of_workers){
+		List<Callable<DownloadRecord>> tasks = new ArrayList<Callable<DownloadRecord>>();
 		for( int i = 0 ; i < number_of_workers ; i++)				
 			tasks.add(new DownloadWorker(queue));
 		return tasks;
@@ -43,11 +43,11 @@ public class SeedProcessor {
 	 */
 	public void downloadSeeds(int number_of_workers){
 		ExecutorService executorService = Executors.newFixedThreadPool(number_of_workers);			
-		List<Future<String>> futures = null;		
+		List<Future<DownloadRecord>> futures = null;		
 		try {
 			futures = executorService.invokeAll(getWorkers(number_of_workers));
-			for(Future<String> future : futures){
-			    System.out.println(future.get());
+			for(Future<DownloadRecord> future : futures){
+			    System.out.println(future.get().status());
 			}
 		} catch (InterruptedException e) {			
 			e.printStackTrace();

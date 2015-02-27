@@ -14,11 +14,10 @@ import java.util.logging.Logger;
  * @author vamsi emani
  * Used to speed up the download process.
  */
-public class DownloadWorker implements Callable<String>{
+public class DownloadWorker implements Callable<DownloadRecord>{
 
-	BlockingQueue<MailSeed> queue;
-	private int download = 0;
-	private int failed = 0;
+	BlockingQueue<MailSeed> queue;	
+	DownloadRecord record = new DownloadRecord();
 	
 	private static final Logger log = Logger.getLogger(DownloadWorker.class.getSimpleName());
 	
@@ -37,7 +36,8 @@ public class DownloadWorker implements Callable<String>{
 		rbc.close();
 	}
 
-	public String call() throws Exception {		
+	public DownloadRecord call() throws Exception {	
+		record.setOwner(Thread.currentThread());
 		while(!queue.isEmpty()){			
 			try {
 				MailSeed seed = queue.take();				
@@ -46,17 +46,17 @@ public class DownloadWorker implements Callable<String>{
 				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
 				try {
 					download(url, fileName);
-					download++;
+					record.downloaded();
 				} catch (Exception e) {
 					log.severe("Unable to download : "+url);
 					seed.setDownloadFailed();
-					failed++;
+					record.failed();
 				}							
 			} catch (InterruptedException e1) {				
 				e1.printStackTrace();
 			}			
 		}
-		String stats = Thread.currentThread().getName()+" successfully downloaded "+download+"/"+(download+failed)+" downloads.";
-		return stats;
+		//String stats = Thread.currentThread().getName()+record.status();
+		return record;
 	}
 }
