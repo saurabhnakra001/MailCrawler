@@ -46,9 +46,7 @@ public class SeedProcessor {
 		List<Future<DownloadRecord>> futures = null;		
 		try {
 			futures = executorService.invokeAll(getWorkers(number_of_workers));
-			for(Future<DownloadRecord> future : futures){
-			    System.out.println(future.get().status());
-			}
+			printStatistics(futures);
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
 		} catch (ExecutionException e) {			
@@ -56,6 +54,12 @@ public class SeedProcessor {
 		}		
 
 		executorService.shutdown();			
+	}
+	
+	public void printStatistics(List<Future<DownloadRecord>> futures) throws InterruptedException, ExecutionException{
+		for(Future<DownloadRecord> future : futures){
+		    System.out.println(future.get().status());
+		}
 	}
 	
 	public List<MailSeed> getFailedSeeds(){
