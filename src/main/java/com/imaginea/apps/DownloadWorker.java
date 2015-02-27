@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 public class DownloadWorker implements Callable<String>{
 
 	BlockingQueue<MailSeed> queue;
+	private int download = 0;
+	private int failed = 0;
 	
 	private static final Logger log = Logger.getLogger(DownloadWorker.class.getSimpleName());
 	
@@ -44,14 +46,17 @@ public class DownloadWorker implements Callable<String>{
 				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
 				try {
 					download(url, fileName);
+					download++;
 				} catch (Exception e) {
 					log.severe("Unable to download : "+url);
 					seed.setDownloadFailed();
+					failed++;
 				}							
 			} catch (InterruptedException e1) {				
 				e1.printStackTrace();
 			}			
 		}
-		return Thread.currentThread().getName()+" completed..";
+		String stats = Thread.currentThread().getName()+" successfully downloaded "+download+"/"+(download+failed)+" downloads.";
+		return stats;
 	}
 }
