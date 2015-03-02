@@ -19,28 +19,32 @@ public abstract class AbstractCrawler implements WebSpider {
 
 	Scanner scanner = new Scanner(System.in);
 
-	String urlSuffix;	
-	
 	protected static int DOWNLOAD_WORKER_THREADS = 1;
 	
 	/**
 	 * Reads input from command line.
 	 */
 	public void consumeInputs(){
-		String year = readInput("Enter year in YYYY format (example - 2014) : ");		
-		String month = readInput("Enter month in MM format (example - 02) : ");		
-		this.urlSuffix = year + month + ".mbox";				
+		try{
+			DOWNLOAD_WORKER_THREADS = Integer.parseInt(readInput(StringConstants.NUM_DOWNLOAD_WORKERS));
+		}catch(NumberFormatException e){
+			System.out.println(StringConstants.INVALID_NUM_WORKERS);
+			DOWNLOAD_WORKER_THREADS = 1; 			
+		}
 	}
 
 	public void run() {
-		processWebPage();
-		processor.addSeeds(extractLinks());
+		collectHyperlinks();
+		processLinksOnWebPage();
+		processor.addSeeds(extractSeeds());
 		download();
 	}
 
-	public abstract void processWebPage();
+	public abstract void collectHyperlinks();
 	
-	public abstract List<MailSeed> extractLinks();		
+	public abstract void processLinksOnWebPage();
+	
+	public abstract List<MailSeed> extractSeeds();		
 		
 	public String readInput(Object msg){
 		System.out.println(msg);

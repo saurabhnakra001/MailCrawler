@@ -15,5 +15,7 @@ public class StringConstants {
 	
 	public static final String INVALID_NUM_WORKERS = "Invalid input, default download worker thread count set to 1";
 	
+	public static final String INPUT_YEAR = "2014";
+	
 	
 }

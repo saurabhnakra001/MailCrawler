@@ -11,6 +11,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  * without an actual browser,  so that dynamically generated 
  * mail links can be interpreted by the crawler for link extraction. 
  */
+
+@Deprecated
 public class JSSandbox {
 
 	/**
