@@ -1,34 +1,28 @@
 package com.imaginea.apps;
 
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class Link {
 
-	boolean isPageLink, isMailLink;
+	private String urlSuffix;
 	
-	String urlSuffix;
-	
-	HtmlAnchor anchor; 
-	
-	public Link(HtmlAnchor url) {
-		this.anchor = url;		
+	private HtmlAnchor anchor; 
+
+	private LinkType linkType;
+
+	public enum LinkType{
+		PAGE, MAIL;
 	}
-	
-	public static Link newPageLink(HtmlAnchor url){
-		Link aLink = new Link(url);						
-		aLink.urlSuffix = Utility.urlSuffixOfUrl(aLink.href());;
-		aLink.isPageLink = true;
-		return aLink;
-	}
-	
-	public static Link newMailLink(HtmlAnchor url){
-		String urlStr = url.getPage().getUrl().toString();				
-		Link aLink = new Link(url);
-		aLink.isMailLink = true;
-		aLink.urlSuffix = Utility.urlSuffixOfUrl(urlStr);;
-		return aLink;
+				
+	public Link(HtmlAnchor url, LinkType linkType) {		
+		this.anchor = url;
+		this.setLinkType(linkType);
+		if(linkType.equals(LinkType.MAIL)){
+			String urlStr = url.getPage().getUrl().toString();	
+			this.urlSuffix = Utility.urlSuffixOfUrl(urlStr);;
+		}else if(linkType.equals(LinkType.PAGE)){
+			this.urlSuffix = Utility.urlSuffixOfUrl(this.href());
+		}		
 	}
 	
 	public String href(){
@@ -36,15 +30,27 @@ public class Link {
 	}
 
 	public boolean isPageLink(){
-		return isPageLink;
+		return this.linkType == LinkType.PAGE;
 	}
 	
 	public boolean isMailLink(){
-		return isMailLink;
+		return this.linkType == LinkType.MAIL;
 	}
 	
 	public String getUrlSuffix(){
 		return urlSuffix;
+	}
+	
+	public LinkType getLinkType() {
+		return linkType;
+	}
+	
+	public HtmlAnchor getAnchor() {
+		return anchor;
+	}
+
+	public void setLinkType(LinkType linkType) {
+		this.linkType = linkType;
 	}
 	
 	@Override
@@ -52,5 +58,21 @@ public class Link {
 		if(urlSuffix != null && anchor != null)
 			return urlSuffix+"("+href()+")";
 		return super.toString();
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		boolean isEqual= false;
+	    if (object != null && object instanceof Link){
+	    	String objHref = ((Link) object).href();
+	        isEqual = (this.href() == objHref) /*|| objHref.contains(this.href()) || this.href().contains(objHref)*/ ;
+	    }
+
+	    return isEqual;
+	}
+	
+	@Override
+	public int hashCode() {		
+		return this.href().hashCode();		
 	}
 }

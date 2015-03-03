@@ -5,13 +5,10 @@ package com.imaginea.apps;
  * @author vamsi emani
  *
  */
-public interface WebSpider {
-
-	/** Enter inputs **/;
-	public void consumeInputs();
+public interface WebSpider {	
 	
 	/** This relates to how the crawler executes the extraction of links. **/
-	public void run();
+	public void crawl();
 	
 	/** Any other validations for crawler **/
 	public boolean canCrawl();

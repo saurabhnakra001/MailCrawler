@@ -39,85 +39,64 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 public class Crawler extends AbstractCrawler {
 		
-	WebClient webClient = null;	
-	HtmlPage currentPage = null;
-	private List<Link> hyperlinks = new CopyOnWriteArrayList<Link>();;		
-	private List processedPages = new ArrayList();
-	private static final Logger log = Logger.getLogger(Crawler.class.getName());
+	private WebClient webClient = null;				
+	private static final Logger log = Logger.getLogger(Crawler.class.getName());	
+	private URLValidator validator = new URLValidator();
 	
-	public static void main(String[] args) throws IOException {		
+	/*public static void main(String[] args) throws IOException {		
 		Crawler crawler = new Crawler();
 		crawler.initializeWebClient();
 		crawler.consumeInputs();
 		if(crawler.canCrawl())
-			crawler.run();
+			crawler.crawl();
 		else
 			log.severe(StringConstants.CANNOT_CRAWL);
 		crawler.closeWebClient();
-	}				
+	}	*/			
 	
+	public Crawler() {		
+		this.seedProcessor = new MailSeedProcessor(this);		
+	}
+	
+/*	public String readInput(Object msg){
+		Scanner scanner = new Scanner(System.in);
+		System.out.println(msg);
+		return scanner.nextLine();
+	}*/
+	
+	/**
+	 * Reads input from command line.
+	 */
+	/*public void consumeInputs(){
+		try{
+			setLinkGenerateWorkerCount(Integer.parseInt(readInput(StringConstants.NUM_LINK_GENERATE_WORKERS)));
+			setDownloadWorkerCount(Integer.parseInt(readInput(StringConstants.NUM_DOWNLOAD_WORKERS)));			
+		}catch(NumberFormatException e){
+			log.info(StringConstants.INVALID_NUM_WORKERS);					
+		}
+	}*/
+		
 	/**
 	 * Process the web page to load the list of mail messages loaded by js. 
 	 */
 	@Override
-	public void collectHyperlinks() {
-		try {						
+	public List<Link> collectHyperlinks() {
+		List<Link> links = new ArrayList<Link>() ;
+		try {	
+			log.info(getUrl());
 			HtmlPage page = webClient.getPage(getUrl());	
 			HtmlPage resp = HTMLParser.parseHtml(page.getWebResponse(), webClient.getCurrentWindow());
-			this.hyperlinks = addValidHyperlinks(resp);								
+			links = validator.getValidPagelinks(resp, links);								
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}				
+		return links;
 	}
-	
-	@Override
-	public void processLinksOnWebPage() {
-		Iterator<Link> it = hyperlinks.listIterator();				
-		while(it.hasNext()){			
-			Link link = it.next();
-			String urlSuffix = link.getUrlSuffix();
-			String href = link.href();	
-			if(link.isPageLink()){
-				//urlSuffix = href.substring(0, href.indexOf("/"));
-				if(!processedPages.contains(urlSuffix)){
-					try {
-						processedPages.add(urlSuffix);
-						Object next = link.anchor.click();
-						if(next instanceof HtmlPage){
-							HtmlPage nextResp = HTMLParser.parseHtml(((Page) next).getWebResponse(), webClient.getCurrentWindow());
-							addValidHyperlinks((HtmlPage) nextResp);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}	
-				}
-			}
-		}
-		
-	}
-	
+
 	public String getUrl(){
 		return StringConstants.BASEURL;
 	}
-	
-	/** 
-	 * Returns a list of mail seeds extracted from the webpage.  
-	 */
-	@Override
-	public List<MailSeed> extractSeeds() {		
-		List<MailSeed> seeds = new ArrayList<MailSeed>();				
-		Iterator<Link> it1 = hyperlinks.iterator();
-		while(it1.hasNext()){
-			Link link = it1.next();						
-			if(link.isMailLink()){							
-				String decodedHref = Utility.decodeUrl(Utility.encodeUrl(link.href()));				
-				seeds.add(MailSeed.newFor(decodedHref, link.getUrlSuffix()));
-			}
-		}
-		System.out.println(hyperlinks.size());
-		return seeds;
-	}
-	
+		
 	/**
 	 * A headless browser (not a browser) that provides ability to 
 	 * execute browser js ..
@@ -134,30 +113,14 @@ public class Crawler extends AbstractCrawler {
 	    webClient.getOptions().setUseInsecureSSL(true);
 	}
 	
+	public WebClient getWebClient(){
+		return webClient;
+	}
+	
 	public void closeWebClient(){
 		webClient.closeAllWindows();
-	}
-	
-	/**
-	* Adds the valid hyperlinks on page. 
-	*/
-	public List<Link> addValidHyperlinks(HtmlPage page) throws IOException{				
-		for (HtmlAnchor anchor : page.getAnchors()) {
-			String href = anchor.getHrefAttribute();
-			if(Utility.isValidPageLink(href)){
-				String urlSuffix = Utility.urlSuffixOfUrl(href);
-				if(!processedPages.contains(urlSuffix)){
-					Link l = Link.newPageLink(anchor);
-					log.info("Processed link : "+l);
-					hyperlinks.add(l);
-				}
-			}
-			else if(Utility.isValidMailLink(href))
-				hyperlinks.add(Link.newMailLink(anchor));
-		}			
-		return hyperlinks;	
-	}
-	
+	}	
+			
 	@Override
 	public boolean canCrawl(){
 		return validateInput(getUrl());

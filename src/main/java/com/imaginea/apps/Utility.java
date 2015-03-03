@@ -52,16 +52,7 @@ public class Utility {
 		}
 		return result;
 	}
-	
-	public static boolean isValidPageLink(String href){
-		return href.contains(StringConstants.INPUT_YEAR) && href.contains("mbox");
-	}
-	
-	public static boolean isValidMailLink(String href){
-		return href.startsWith("%3");
-	}
-	
-	
+			
 	public static String urlSuffixOfUrl(String href){
 		String urlSuffix = href.substring(href.indexOf(StringConstants.INPUT_YEAR));		
 		urlSuffix = urlSuffix.substring(0, urlSuffix.indexOf("/"));
