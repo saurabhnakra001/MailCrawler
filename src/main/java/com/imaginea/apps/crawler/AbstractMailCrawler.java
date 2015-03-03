@@ -1,7 +1,12 @@
-package com.imaginea.apps;
+package com.imaginea.apps.crawler;
 
 
+import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Future;
+
+import com.imaginea.apps.crawler.processor.MailSeedProcessor;
+import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
 /**
  * 
@@ -28,10 +33,10 @@ public abstract class AbstractMailCrawler implements WebSpider {
 	
 	public void generateSeeds(Queue<Link> pageLinks){
 		getProcessor().generateSeeds(link_generate_worker_count, pageLinks);
-	}	
+	}		
 	
-	public void download() {		
-		getProcessor().downloadSeeds(getDownloadWorkerCount()); 		
+	public List<Future<WorkerRecord>> download() {		
+		return getProcessor().downloadSeeds(getDownloadWorkerCount()); 		
 	}
 
 	public abstract Queue<Link> collectHyperlinks();					

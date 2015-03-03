@@ -1,4 +1,4 @@
-package com.imaginea.apps;
+package com.imaginea.apps.crawler.workers.records;
 
 /**
  * 
@@ -7,11 +7,10 @@ package com.imaginea.apps;
  * To print download statistics on the worker.
  *
  */
-public class DownloadRecord {
+public class SeedConsumerRecord extends WorkerRecord{
 	
 	private int download = 0;
 	private int failed = 0;
-	private Thread owner;
 	
 	public void downloaded(){
 		download++;
@@ -26,14 +25,7 @@ public class DownloadRecord {
 	}
 	
 	public String status(){
-		return owner.getName()+" successfully downloaded "+download+"/"+(download+failed)+" downloads.";
+		return super.status()+" successfully downloaded "+download+"/"+(download+failed)+" downloads.";
 	}
-	
-	public void setOwner(Thread thread){
-		owner = thread;
-	}
-	
-	public Thread getOwner(){
-		return owner;
-	}
+		
 }

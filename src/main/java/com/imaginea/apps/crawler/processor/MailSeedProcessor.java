@@ -1,4 +1,4 @@
-package com.imaginea.apps;
+package com.imaginea.apps.crawler.processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
+
+import com.imaginea.apps.crawler.Link;
+import com.imaginea.apps.crawler.MailCrawler;
+import com.imaginea.apps.crawler.MailSeed;
+import com.imaginea.apps.crawler.workers.SeedConsumer;
+import com.imaginea.apps.crawler.workers.SeedProducer;
+import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
 /**
  * @author vamsi emani
@@ -39,18 +46,18 @@ public class MailSeedProcessor implements SeedProcessor{
 			addSeed(seed);
 	}	
 	
-	private List<Callable<DownloadRecord>> getConsumerWorkers(int number_of_workers){
-		List<Callable<DownloadRecord>> tasks = new ArrayList<Callable<DownloadRecord>>();
+	public List<Callable<WorkerRecord>> getSeedConsumers(int number_of_workers){
+		List<Callable<WorkerRecord>> tasks = new ArrayList<Callable<WorkerRecord>>();
 		for( int i = 0 ; i < number_of_workers ; i++)				
-			tasks.add(new DownloadWorker(queue));
+			tasks.add(new SeedConsumer(queue));
 		return tasks;
 	}
 	
-	private List<Callable<String>> getProducerWorkers(int number_of_workers, Queue<Link> links){
-		List<Callable<String>> tasks = new ArrayList<Callable<String>>();
+	public List<Callable<WorkerRecord>> getSeedProducers(int number_of_workers, Queue<Link> links){
+		List<Callable<WorkerRecord>> tasks = new ArrayList<Callable<WorkerRecord>>();
 		ConcurrentHashMap<String, MailSeed> map = new ConcurrentHashMap<String, MailSeed>();
 		for( int i = 0 ; i < number_of_workers ; i++){
-			LinkWorker worker = new LinkWorker(queue, links);
+			SeedProducer worker = new SeedProducer(queue, links);
 			worker.setWebClient(crawler.getWebClient());
 			worker.setVisited(map);
 			tasks.add(worker);
@@ -61,11 +68,11 @@ public class MailSeedProcessor implements SeedProcessor{
 	/**
 	 * Downloads the seeds in queue.. 
 	 */
-	public void downloadSeeds(int number_of_workers){
+	public List<Future<WorkerRecord>> downloadSeeds(int number_of_workers){
 		ExecutorService executorService = Executors.newFixedThreadPool(number_of_workers);			
-		List<Future<DownloadRecord>> futures = null;		
+		List<Future<WorkerRecord>> futures = null;		
 		try {
-			futures = executorService.invokeAll(getConsumerWorkers(number_of_workers));
+			futures = executorService.invokeAll(getSeedConsumers(number_of_workers));
 			printStatistics(futures);
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
@@ -73,28 +80,33 @@ public class MailSeedProcessor implements SeedProcessor{
 			e.printStackTrace();
 		}		
 
-		executorService.shutdown();			
+		executorService.shutdown();	
+		return futures;
 	}
 	
 	/**
 	 * Downloads the seeds in queue.. 
+	 * @return 
 	 */
-	public void generateSeeds(int number_of_workers, Queue<Link> links){
+	public List<Future<WorkerRecord>> generateSeeds(int number_of_workers, Queue<Link> links){
 		ExecutorService executorService = Executors.newFixedThreadPool(number_of_workers);			
-		List<Future<String>> futures = null;		
+		List<Future<WorkerRecord>> futures = null;		
 		try {
-			futures = executorService.invokeAll(getProducerWorkers(number_of_workers, links));
-			//printStatistics(futures);
+			futures = executorService.invokeAll(getSeedProducers(number_of_workers, links));
+			printStatistics(futures);
 		} catch (InterruptedException e) {			
+			e.printStackTrace();
+		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}		
 
-		executorService.shutdown();			
+		executorService.shutdown();	
+		return futures;
 	}
 	
 	
-	public void printStatistics(List<Future<DownloadRecord>> futures) throws InterruptedException, ExecutionException{
-		for(Future<DownloadRecord> future : futures){
+	public void printStatistics(List<Future<WorkerRecord>> futures) throws InterruptedException, ExecutionException{
+		for(Future<WorkerRecord> future : futures){
 		    System.out.println(future.get().status());
 		}
 	}

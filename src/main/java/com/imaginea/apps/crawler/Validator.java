@@ -1,4 +1,4 @@
-package com.imaginea.apps;
+package com.imaginea.apps.crawler;
 
 import java.io.IOException;
 import java.util.ArrayList;

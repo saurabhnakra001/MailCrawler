@@ -3,6 +3,10 @@ package com.imaginea.apps;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import com.imaginea.apps.crawler.MailCrawler;
+import com.imaginea.apps.crawler.StringConstants;
+import com.imaginea.apps.crawler.Validator;
+
 /**
  * 
  * @author vamsi emani

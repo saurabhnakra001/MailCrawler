@@ -1,4 +1,4 @@
-package com.imaginea.apps;
+package com.imaginea.apps.crawler.workers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,19 +10,25 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import com.imaginea.apps.crawler.MailSeed;
+import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
+import com.imaginea.apps.crawler.workers.records.WorkerRecord;
+
 /**
  * @author vamsi emani
  * Used to speed up the download process.
+ * Seed consumer downloads the mails.
  */
-public class DownloadWorker implements Callable<DownloadRecord>{
+public class SeedConsumer implements Callable<WorkerRecord>{
 
-	BlockingQueue<MailSeed> queue;	
-	DownloadRecord record = new DownloadRecord();
+	private BlockingQueue<MailSeed> queue;	
+	private WorkerRecord record;
 	
-	private static final Logger log = Logger.getLogger(DownloadWorker.class.getSimpleName());
+	private static final Logger log = Logger.getLogger(SeedConsumer.class.getSimpleName());
 	
-	public DownloadWorker(BlockingQueue<MailSeed> queue) {
+	public SeedConsumer(BlockingQueue<MailSeed> queue) {
 		this.queue = queue;
+		this.record = new SeedConsumerRecord();
 	}
 		
 	private synchronized void download(String folder, String urlStr, String fileName) throws IOException{
@@ -36,28 +42,28 @@ public class DownloadWorker implements Callable<DownloadRecord>{
 		rbc.close();
 	}
 
-	public DownloadRecord call() throws Exception {	
-		record.setOwner(Thread.currentThread());
+	public WorkerRecord call() throws Exception {			
+		SeedConsumerRecord rec = ((SeedConsumerRecord) record);
+		rec.setOwner(Thread.currentThread());
 		while(!queue.isEmpty()){			
 			try {
 				MailSeed seed = queue.take();				
 				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size()+1)+".txt";
-				String url = seed.getDownloadUrl();
+				String url = seed.getDownloadUrl();				
 				String folder = "output"+File.separator+seed.getYear()+File.separator+seed.getMonth();
 				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
 				try {
 					download(folder, url, fileName);
-					record.downloaded();
+					rec.downloaded();
 				} catch (Exception e) {
 					log.severe("Unable to download : "+url);
 					seed.setDownloadFailed();
-					record.failed();
+					rec.failed();
 				}							
 			} catch (InterruptedException e1) {				
 				e1.printStackTrace();
 			}			
-		}
-		//String stats = Thread.currentThread().getName()+record.status();
+		}		
 		return record;
 	}
 }
