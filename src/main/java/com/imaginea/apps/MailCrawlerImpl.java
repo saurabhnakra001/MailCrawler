@@ -19,8 +19,7 @@ public class MailCrawlerImpl {
 		int cDownload = impl.getIntegerInput(StringConstants.NUM_DOWNLOAD_WORKERS, StringConstants.INVALID_NUM_WORKERS);	
 		MailCrawler crawler = impl.initCrawler(cLinkGen, cDownload);		
 		crawler.initializeWebClient();		
-		impl.runCrawler(crawler);
-		crawler.closeWebClient();
+		impl.runCrawler(crawler);		
 	}
 
 	public void runCrawler(MailCrawler crawler){
@@ -32,6 +31,7 @@ public class MailCrawlerImpl {
 	
 	public MailCrawler initCrawler(int num_link_gen_worker, int num_dwn_worker){
 		MailCrawler crawler = new MailCrawler();
+		crawler.setValidator(new Validator());
 		if(num_link_gen_worker != -1)
 			crawler.setLinkGenerateWorkerCount(num_link_gen_worker);
 		if(num_dwn_worker != -1)

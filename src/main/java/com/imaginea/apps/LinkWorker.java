@@ -59,7 +59,7 @@ public class LinkWorker implements Callable{
 	public void createSeeds(HtmlPage page) throws IOException{				
 		for (HtmlAnchor anchor : page.getAnchors()) {
 			String href = anchor.getHrefAttribute();
-			if(new URLValidator().isValidMailLink(href) && visited.get(href) == null){												
+			if(new Validator().isValidMailLink(href) && visited.get(href) == null){												
 				String urlStr = anchor.getPage().getUrl().toString();									
 				String decodedHref = Utility.decodeUrl(Utility.encodeUrl(href));
 				MailSeed seed = new MailSeed(decodedHref, Utility.urlSuffixOfUrl(urlStr));				

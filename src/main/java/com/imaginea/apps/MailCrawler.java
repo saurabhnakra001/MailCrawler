@@ -43,9 +43,7 @@ public class MailCrawler extends AbstractMailCrawler {
 		
 	private WebClient webClient = null;				
 	private static final Logger log = Logger.getLogger(MailCrawler.class.getName());	
-	private URLValidator validator = new URLValidator();
 			
-	
 	public MailCrawler() {		
 		this.seedProcessor = new MailSeedProcessor(this);		
 	}	
@@ -70,7 +68,7 @@ public class MailCrawler extends AbstractMailCrawler {
 	public Queue<Link> processPage(HtmlPage page, Queue<Link> links){
 		for (HtmlAnchor anchor : page.getAnchors()) {
 			String href = anchor.getHrefAttribute();
-			if(new URLValidator().isValidPageLink(href)){
+			if(getValidator().isValidPageLink(href)){
 				String urlSuffix = Utility.urlSuffixOfUrl(href);				
 				Link link = new Link(anchor, Link.LinkType.PAGE);				
 				System.out.println("Processing : "+link);
@@ -95,8 +93,8 @@ public class MailCrawler extends AbstractMailCrawler {
 	    webClient.waitForBackgroundJavaScript(60000);
 	    webClient.getOptions().setRedirectEnabled(true);
 	    webClient.getOptions().setJavaScriptEnabled(true);
-	    webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-	    webClient.getOptions().setThrowExceptionOnScriptError(false);
+	   // webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+	    //webClient.getOptions().setThrowExceptionOnScriptError(false);
 	    webClient.getOptions().setCssEnabled(false);
 	    webClient.getOptions().setUseInsecureSSL(true);
 	}

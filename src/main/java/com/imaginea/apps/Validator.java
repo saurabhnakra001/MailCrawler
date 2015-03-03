@@ -11,7 +11,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  * @author vamsi emani
 
  */
-public class URLValidator {
+public class Validator {
 
 	public boolean isValidPageLink(String href){
 		return href.contains(StringConstants.INPUT_YEAR) && href.contains("mbox")
