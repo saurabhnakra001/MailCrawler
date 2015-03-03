@@ -1,6 +1,7 @@
 package com.imaginea.apps;
 
 import java.util.List;
+import java.util.Queue;
 
 /**
  * 
@@ -11,5 +12,5 @@ public interface SeedProcessor {
 
 	public void downloadSeeds(int number_of_workers);
 	
-	public void generateSeeds(int number_of_workers, List<Link> links);
+	public void generateSeeds(int number_of_workers, Queue<Link> links);
 }

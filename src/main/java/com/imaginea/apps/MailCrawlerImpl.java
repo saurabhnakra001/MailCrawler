@@ -17,21 +17,21 @@ public class MailCrawlerImpl {
 		MailCrawlerImpl impl = new MailCrawlerImpl();
 		int cLinkGen = impl.getIntegerInput(StringConstants.NUM_LINK_GENERATE_WORKERS, StringConstants.INVALID_LINK_GENERATE_WORKERS);
 		int cDownload = impl.getIntegerInput(StringConstants.NUM_DOWNLOAD_WORKERS, StringConstants.INVALID_NUM_WORKERS);	
-		Crawler crawler = impl.initCrawler(cLinkGen, cDownload);		
+		MailCrawler crawler = impl.initCrawler(cLinkGen, cDownload);		
 		crawler.initializeWebClient();		
 		impl.runCrawler(crawler);
 		crawler.closeWebClient();
 	}
 
-	public void runCrawler(Crawler crawler){
+	public void runCrawler(MailCrawler crawler){
 		if(crawler.canCrawl())
 			crawler.crawl();
 		else
 			log.severe(StringConstants.CANNOT_CRAWL);
 	}
 	
-	public Crawler initCrawler(int num_link_gen_worker, int num_dwn_worker){
-		Crawler crawler = new Crawler();
+	public MailCrawler initCrawler(int num_link_gen_worker, int num_dwn_worker){
+		MailCrawler crawler = new MailCrawler();
 		if(num_link_gen_worker != -1)
 			crawler.setLinkGenerateWorkerCount(num_link_gen_worker);
 		if(num_dwn_worker != -1)

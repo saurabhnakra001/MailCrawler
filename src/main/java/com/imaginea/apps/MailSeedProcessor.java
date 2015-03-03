@@ -1,9 +1,10 @@
 package com.imaginea.apps;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,13 +20,13 @@ import java.util.logging.Logger;
 public class MailSeedProcessor implements SeedProcessor{
 	
 	/** Use a blocking queue to enable multi-threading in future and to withstand internet connection loss **/
-	private LinkedBlockingQueue<MailSeed> queue = new LinkedBlockingQueue<MailSeed>();
+	private LinkedBlockingQueue<MailSeed> queue = new LinkedBlockingQueue<MailSeed>();	
 
-	private Crawler crawler;
+	private MailCrawler crawler;
 	
 	private static final Logger log = Logger.getLogger(MailSeedProcessor.class.getSimpleName());
 	
-	public MailSeedProcessor(Crawler crawler) {
+	public MailSeedProcessor(MailCrawler crawler) {
 		this.crawler = crawler;
 	}
 		
@@ -36,7 +37,7 @@ public class MailSeedProcessor implements SeedProcessor{
 	public void addSeeds(List<MailSeed> seeds){
 		for(MailSeed seed : seeds)
 			addSeed(seed);
-	}
+	}	
 	
 	private List<Callable<DownloadRecord>> getConsumerWorkers(int number_of_workers){
 		List<Callable<DownloadRecord>> tasks = new ArrayList<Callable<DownloadRecord>>();
@@ -45,11 +46,13 @@ public class MailSeedProcessor implements SeedProcessor{
 		return tasks;
 	}
 	
-	private List<Callable<String>> getProducerWorkers(int number_of_workers, List<Link> links){
+	private List<Callable<String>> getProducerWorkers(int number_of_workers, Queue<Link> links){
 		List<Callable<String>> tasks = new ArrayList<Callable<String>>();
+		ConcurrentHashMap<String, MailSeed> map = new ConcurrentHashMap<String, MailSeed>();
 		for( int i = 0 ; i < number_of_workers ; i++){
 			LinkWorker worker = new LinkWorker(queue, links);
 			worker.setWebClient(crawler.getWebClient());
+			worker.setVisited(map);
 			tasks.add(worker);
 		}
 		return tasks;
@@ -76,7 +79,7 @@ public class MailSeedProcessor implements SeedProcessor{
 	/**
 	 * Downloads the seeds in queue.. 
 	 */
-	public void generateSeeds(int number_of_workers, List<Link> links){
+	public void generateSeeds(int number_of_workers, Queue<Link> links){
 		ExecutorService executorService = Executors.newFixedThreadPool(number_of_workers);			
 		List<Future<String>> futures = null;		
 		try {
@@ -105,4 +108,5 @@ public class MailSeedProcessor implements SeedProcessor{
 		}
 		return failed;
 	}
+			
 }

@@ -8,8 +8,10 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import net.sourceforge.htmlunit.corejs.javascript.TopLevel;
@@ -37,62 +39,48 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
  * Refer http://mail-archives.apache.org/mod_mbox/maven-users
  */
 
-public class Crawler extends AbstractCrawler {
+public class MailCrawler extends AbstractMailCrawler {
 		
 	private WebClient webClient = null;				
-	private static final Logger log = Logger.getLogger(Crawler.class.getName());	
+	private static final Logger log = Logger.getLogger(MailCrawler.class.getName());	
 	private URLValidator validator = new URLValidator();
+			
 	
-	/*public static void main(String[] args) throws IOException {		
-		Crawler crawler = new Crawler();
-		crawler.initializeWebClient();
-		crawler.consumeInputs();
-		if(crawler.canCrawl())
-			crawler.crawl();
-		else
-			log.severe(StringConstants.CANNOT_CRAWL);
-		crawler.closeWebClient();
-	}	*/			
-	
-	public Crawler() {		
+	public MailCrawler() {		
 		this.seedProcessor = new MailSeedProcessor(this);		
-	}
-	
-/*	public String readInput(Object msg){
-		Scanner scanner = new Scanner(System.in);
-		System.out.println(msg);
-		return scanner.nextLine();
-	}*/
-	
-	/**
-	 * Reads input from command line.
-	 */
-	/*public void consumeInputs(){
-		try{
-			setLinkGenerateWorkerCount(Integer.parseInt(readInput(StringConstants.NUM_LINK_GENERATE_WORKERS)));
-			setDownloadWorkerCount(Integer.parseInt(readInput(StringConstants.NUM_DOWNLOAD_WORKERS)));			
-		}catch(NumberFormatException e){
-			log.info(StringConstants.INVALID_NUM_WORKERS);					
-		}
-	}*/
+	}	
 		
 	/**
 	 * Process the web page to load the list of mail messages loaded by js. 
 	 */
-	@Override
-	public List<Link> collectHyperlinks() {
-		List<Link> links = new ArrayList<Link>() ;
+	
+	public Queue<Link> collectHyperlinks() {	
+		Queue<Link> pageLinks = new LinkedBlockingQueue<Link>();
 		try {	
 			log.info(getUrl());
 			HtmlPage page = webClient.getPage(getUrl());	
 			HtmlPage resp = HTMLParser.parseHtml(page.getWebResponse(), webClient.getCurrentWindow());
-			links = validator.getValidPagelinks(resp, links);								
+			pageLinks = processPage(resp, pageLinks);								
 		} catch (IOException e) {			
 			e.printStackTrace();
-		}				
-		return links;
+		}					
+		return pageLinks;
 	}
 
+	public Queue<Link> processPage(HtmlPage page, Queue<Link> links){
+		for (HtmlAnchor anchor : page.getAnchors()) {
+			String href = anchor.getHrefAttribute();
+			if(new URLValidator().isValidPageLink(href)){
+				String urlSuffix = Utility.urlSuffixOfUrl(href);				
+				Link link = new Link(anchor, Link.LinkType.PAGE);				
+				System.out.println("Processing : "+link);
+				if(!links.contains(link))
+					links.add(link);
+			}
+		}	
+		return links;
+	}	
+	
 	public String getUrl(){
 		return StringConstants.BASEURL;
 	}

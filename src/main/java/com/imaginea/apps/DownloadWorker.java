@@ -25,12 +25,12 @@ public class DownloadWorker implements Callable<DownloadRecord>{
 		this.queue = queue;
 	}
 		
-	private synchronized void download(String urlStr, String fileName) throws IOException{
+	private synchronized void download(String folder, String urlStr, String fileName) throws IOException{
 		URL url;		
-		new File("Output").mkdir();
+		new File(folder).mkdirs();
 		url = new URL(urlStr);
 		ReadableByteChannel rbc = Channels.newChannel(url.openStream());							
-		FileOutputStream fos = new FileOutputStream(new File("Output" + File.separator + fileName));
+		FileOutputStream fos = new FileOutputStream(new File(folder + File.separator + fileName));
 		fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 		fos.close();
 		rbc.close();
@@ -43,9 +43,10 @@ public class DownloadWorker implements Callable<DownloadRecord>{
 				MailSeed seed = queue.take();				
 				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size()+1)+".txt";
 				String url = seed.getDownloadUrl();
+				String folder = "output"+File.separator+seed.getYear()+File.separator+seed.getMonth();
 				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
 				try {
-					download(url, fileName);
+					download(folder, url, fileName);
 					record.downloaded();
 				} catch (Exception e) {
 					log.severe("Unable to download : "+url);

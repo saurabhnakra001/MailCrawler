@@ -9,9 +9,9 @@ package com.imaginea.apps;
 
 public class MailSeed {
 	
-	String id, urlSuffix;
+	private String id, urlSuffix;
 	
-	boolean downloadFailed;
+	private boolean downloadFailed;
 	
 	public MailSeed(String id, String urlSuffix){
 		this.id = id;
@@ -28,13 +28,14 @@ public class MailSeed {
 	
 	public String getUrlSuffix(){
 		return urlSuffix;
+	}		
+	
+	public String getMonth(){
+		return urlSuffix.substring(4, 6);
 	}
 	
-	public static MailSeed newFor(String link, String suffix){
-		String id = link;
-		if(link.startsWith("ajax/"))
-			id = id.substring(id.indexOf("/")+1);					
-		return new MailSeed(id, suffix);
+	public String getYear(){
+		return urlSuffix.substring(0,4);
 	}
 	
 	public void setDownloadFailed() {	
@@ -51,4 +52,19 @@ public class MailSeed {
 			return getDownloadUrl();
 		return super.toString();
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		boolean isEqual= false;
+	    if (object != null && object instanceof MailSeed){
+	    	MailSeed obj = ((MailSeed) object);	    	
+	        isEqual = this.id == obj.id;
+	    }
+	    return isEqual;
+	}
+	
+	@Override
+	public int hashCode() {		
+		return super.hashCode();
+	}	
 }

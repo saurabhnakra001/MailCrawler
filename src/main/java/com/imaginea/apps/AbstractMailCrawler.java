@@ -3,6 +3,7 @@ package com.imaginea.apps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 
 /**
@@ -13,9 +14,9 @@ import java.util.Scanner;
  * to provide your own implementation of the crawler.
  */
 
-public abstract class AbstractCrawler implements WebSpider {
+public abstract class AbstractMailCrawler implements WebSpider {
 		
-	protected SeedProcessor seedProcessor;			
+	protected MailSeedProcessor seedProcessor;			
 	private static int default_download_worker_count = 1;
 	private static int default_link_generate_worker_count = 1;
 	private int download_worker_count = default_download_worker_count;
@@ -23,12 +24,12 @@ public abstract class AbstractCrawler implements WebSpider {
 
 	
 	public void crawl() {
-		List<Link> pageLinks = collectHyperlinks();		
-		generateLinks(pageLinks);
+		Queue<Link> pageLinks = collectHyperlinks();		
+		generateSeeds(pageLinks);
 		download();
 	}
 
-	public abstract List<Link> collectHyperlinks();					
+	public abstract Queue<Link> collectHyperlinks();					
 	
 	public boolean canCrawl() {
 		return true;
@@ -50,16 +51,20 @@ public abstract class AbstractCrawler implements WebSpider {
 		return this.download_worker_count;
 	}
 	
-	public void generateLinks(List<Link> pageLinks){
-		seedProcessor.generateSeeds(link_generate_worker_count, pageLinks);
-	}
+	public void generateSeeds(Queue<Link> pageLinks){
+		getProcessor().generateSeeds(link_generate_worker_count, pageLinks);
+	}	
 	
-	public void setProcessor(SeedProcessor processor){
+	public void setProcessor(MailSeedProcessor processor){
 		this.seedProcessor = processor;
 	}
 	
+	public MailSeedProcessor getProcessor(){
+		return this.seedProcessor;
+	}
+	
 	public void download() {		
-		seedProcessor.downloadSeeds(getDownloadWorkerCount()); 		
+		getProcessor().downloadSeeds(getDownloadWorkerCount()); 		
 	}
 
 }

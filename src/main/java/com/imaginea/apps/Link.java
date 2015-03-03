@@ -64,8 +64,9 @@ public class Link {
 	public boolean equals(Object object) {
 		boolean isEqual= false;
 	    if (object != null && object instanceof Link){
-	    	String objHref = ((Link) object).href();
-	        isEqual = (this.href() == objHref) /*|| objHref.contains(this.href()) || this.href().contains(objHref)*/ ;
+	    	Link obj = ((Link) object);
+	    	String objHref = obj.href();
+	        isEqual = obj.toString().equals(this.toString());
 	    }
 
 	    return isEqual;
