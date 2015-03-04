@@ -3,7 +3,9 @@ package com.imaginea.apps.crawler.workers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.NoRouteToHostException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.BlockingQueue;
@@ -11,6 +13,8 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import com.imaginea.apps.crawler.MailSeed;
+import com.imaginea.apps.crawler.StringConstants;
+import com.imaginea.apps.crawler.exceptions.CannotConnectException;
 import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
@@ -45,26 +49,26 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 	public WorkerRecord call() throws Exception {			
 		SeedConsumerRecord rec = ((SeedConsumerRecord) record);
 		rec.setOwner(Thread.currentThread());
-		while(!queue.isEmpty()){			
-			try {
-				MailSeed seed = queue.take();				
+		MailSeed seed = null;
+		String url = "";
+		try{
+			while(!queue.isEmpty()){							
+				seed = queue.take();				
 				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size()+1)+".txt";
-				String url = seed.getDownloadUrl();				
+				url = seed.getDownloadUrl();				
 				String folder = "output"+File.separator+seed.getYear()+File.separator+seed.getMonth();
-				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);
-				try {
-					download(folder, url, fileName);
-					rec.downloaded();
-				} catch (Exception e) {
-					log.severe("Unable to download : "+url+"\n");
-					e.printStackTrace();
-					seed.setDownloadFailed();
-					rec.failed();
-				}							
-			} catch (InterruptedException e1) {				
-				e1.printStackTrace();
-			}			
-		}		
+				//log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);				
+				download(folder, url, fileName);
+				rec.downloaded();																	
+			}
+		}catch(NoRouteToHostException | UnknownHostException e){
+			String msg = StringConstants.CHECK_INTERNET_CONNECTION+". Unable to download : "+url;
+			seed.setDownloadFailed();
+			((SeedConsumerRecord) record).failed();
+			throw new CannotConnectException(msg);
+		}catch (InterruptedException e1) {				
+			e1.printStackTrace();
+		}	
 		return record;
 	}
 }

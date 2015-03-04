@@ -92,7 +92,7 @@ public class MailCrawler extends AbstractMailCrawler {
 	 */
 	public void initializeWebClient(){
 		webClient = new WebClient(BrowserVersion.CHROME);
-		webClient.getOptions().setTimeout(120000);
+		webClient.getOptions().setTimeout(20000);
 	    webClient.waitForBackgroundJavaScript(60000);
 	    webClient.getOptions().setRedirectEnabled(true);
 	    webClient.getOptions().setJavaScriptEnabled(true);

@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
+import com.imaginea.apps.crawler.exceptions.CannotConnectException;
 import com.imaginea.apps.crawler.workers.SeedConsumer;
 import com.imaginea.apps.crawler.workers.SeedProducer;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
@@ -77,7 +78,7 @@ public class MailSeedProcessor implements SeedProcessor{
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
 		} catch (ExecutionException e) {			
-			e.printStackTrace();
+			handleError(e);
 		}		
 
 		executorService.shutdown();	
@@ -97,13 +98,18 @@ public class MailSeedProcessor implements SeedProcessor{
 		} catch (InterruptedException e) {			
 			e.printStackTrace();
 		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}		
-
+			handleError(e);
+		}
 		executorService.shutdown();	
 		return futures;
 	}
 	
+	private void handleError(ExecutionException e){
+		if(e.getCause() instanceof CannotConnectException)
+			log.severe(e.getMessage());
+		else
+			e.printStackTrace();
+	}
 	
 	public void printStatistics(List<Future<WorkerRecord>> futures) throws InterruptedException, ExecutionException{
 		for(Future<WorkerRecord> future : futures){

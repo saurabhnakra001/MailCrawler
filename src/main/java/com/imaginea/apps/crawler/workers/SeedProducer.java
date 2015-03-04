@@ -1,6 +1,8 @@
 package com.imaginea.apps.crawler.workers;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,8 +19,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailSeed;
+import com.imaginea.apps.crawler.StringConstants;
 import com.imaginea.apps.crawler.Utility;
 import com.imaginea.apps.crawler.Validator;
+import com.imaginea.apps.crawler.exceptions.CannotConnectException;
+import com.imaginea.apps.crawler.exceptions.CrawlerException;
 import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.SeedProducerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
@@ -47,24 +52,27 @@ public class SeedProducer implements Callable<WorkerRecord>{
 		this.webClient = webClient;
 	}
 	
-	public void processLinks(Queue<Link> collected) {	
-		Iterator<Link> it = collected.iterator();				
-		while(it.hasNext()){			
-			Link link = it.next();
-			String urlSuffix = link.getUrlSuffix();
-			String href = link.href();	
-			if(link.isPageLink()){								
-				try {						
+	public void processLinks(Queue<Link> collected) throws CrawlerException {	
+		Iterator<Link> it = collected.iterator();
+		try{
+			while(it.hasNext()){			
+				Link link = it.next();
+				String urlSuffix = link.getUrlSuffix();
+				String href = link.href();	
+				if(link.isPageLink()){																	
 					Object next = link.getAnchor().click();
 					if(next instanceof HtmlPage){
 						HtmlPage nextResp = HTMLParser.parseHtml(((Page) next).getWebResponse(), webClient.getCurrentWindow());
 						createSeeds((HtmlPage) nextResp);
-					}					
-				} catch (IOException e) {
-					e.printStackTrace();
-				}					
+					}														
+				}
 			}
-		}		
+		}catch(RuntimeException | IOException e){
+			if(e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof UnknownHostException)
+				throw new CannotConnectException(StringConstants.CHECK_INTERNET_CONNECTION, e.getCause());
+			else
+				throw new CrawlerException(e);
+		} 
 	}
 	
 	public void createSeeds(HtmlPage page){				
@@ -83,8 +91,9 @@ public class SeedProducer implements Callable<WorkerRecord>{
 		}						
 	}
 	
-	/**extract seeds logic here **/
-	public WorkerRecord call(){			
+	/**extract seeds logic here 
+	 * @throws CrawlerException **/
+	public WorkerRecord call() throws CrawlerException{			
 		record.setOwner(Thread.currentThread());
 		processLinks(pageLinks);;		
 		return record;
