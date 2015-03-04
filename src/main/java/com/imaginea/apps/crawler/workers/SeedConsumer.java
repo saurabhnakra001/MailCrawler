@@ -62,13 +62,11 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 				download(folder, url, fileName);
 				rec.downloaded();																	
 			}
-		}catch(NoRouteToHostException | UnknownHostException e){
+		}catch(IOException e){
 			String msg = StringConstants.CHECK_INTERNET_CONNECTION+". Unable to download : "+url;
 			seed.setDownloadFailed();
 			((SeedConsumerRecord) record).failed();
 			throw new CannotConnectException(msg);
-		}catch (IOException e) {
-			throw new CrawlerException(e);
 		}	
 		return record;
 	}

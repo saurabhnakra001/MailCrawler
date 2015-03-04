@@ -67,11 +67,13 @@ public class SeedProducer implements Callable<WorkerRecord>{
 					}														
 				}
 			}
-		}catch(RuntimeException | IOException e){
-			if(e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof UnknownHostException)
+		}catch(RuntimeException e){
+			if(e.getCause() instanceof IOException || e.getCause() instanceof UnknownHostException)
 				throw new CannotConnectException(StringConstants.CHECK_INTERNET_CONNECTION, e.getCause());
 			else
 				throw new CrawlerException(e);
+		} catch (IOException e) {
+			throw new CannotConnectException(StringConstants.CHECK_INTERNET_CONNECTION, e.getCause());			
 		} 
 	}
 	

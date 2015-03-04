@@ -7,6 +7,10 @@
   <description>Mail crawler</description>
   <packaging>jar</packaging>
   
+  <properties>
+	<jdk.version>1.7</jdk.version>
+  </properties>
+  
   <dependencies>
 	  <dependency>
 		  <groupId>net.sourceforge.htmlunit</groupId>
