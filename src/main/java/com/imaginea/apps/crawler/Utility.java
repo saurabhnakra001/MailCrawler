@@ -23,15 +23,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
  * Utility and helper methods here. 
  */
 public class Utility {
-
-	/** If ever needed (?) **/
-	public static void printPage(Page p) throws IOException{
-		InputStream is = p.getWebResponse().getContentAsStream();
-		int b = 0;
-		while ((b = is.read()) != -1){
-		    System.out.print((char)b);
-		}
-	}			
 	
 	public static String decodeUrl(String encodedUrl){
 		String result = null;
