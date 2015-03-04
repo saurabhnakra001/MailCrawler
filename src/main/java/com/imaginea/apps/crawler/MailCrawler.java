@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+
+
+
+import org.apache.log4j.Logger;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -23,7 +26,7 @@ import com.imaginea.apps.crawler.processor.MailSeedProcessor;
 public class MailCrawler extends AbstractMailCrawler {
 		
 	private WebClient webClient = null;				
-	private static final Logger log = Logger.getLogger(MailCrawler.class.getName());	
+	private static final Logger log = Logger.getLogger(MailCrawler.class);	
 			
 	public MailCrawler() {		
 		this.setProcessor(new MailSeedProcessor(this));	
@@ -101,7 +104,7 @@ public class MailCrawler extends AbstractMailCrawler {
 		try {
 			isValid = webClient.getPage(getUrl()) != null;
 		}catch(UnknownHostException e){
-			log.severe(StringConstants.CHECK_URL_OR_INTERNET_CONNECTION);
+			log.error(StringConstants.CHECK_URL_OR_INTERNET_CONNECTION);
 		}
 		catch (Exception e) {		
 			e.printStackTrace();

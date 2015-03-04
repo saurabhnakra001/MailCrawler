@@ -10,7 +10,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.logging.Logger;
+
+
+
+import org.apache.log4j.Logger;
 
 import com.imaginea.apps.crawler.MailSeed;
 import com.imaginea.apps.crawler.StringConstants;
@@ -29,7 +32,7 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 	private BlockingQueue<MailSeed> queue;	
 	private WorkerRecord record;
 	
-	private static final Logger log = Logger.getLogger(SeedConsumer.class.getSimpleName());
+	private static final Logger log = Logger.getLogger(SeedConsumer.class);
 	
 	public SeedConsumer(BlockingQueue<MailSeed> queue) {
 		this.queue = queue;

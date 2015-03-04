@@ -11,7 +11,10 @@ import static com.imaginea.apps.crawler.StringConstants.NUM_DOWNLOAD_WORKERS;
 import static com.imaginea.apps.crawler.StringConstants.NUM_LINK_GENERATE_WORKERS;
 
 import java.util.Scanner;
-import java.util.logging.Logger;
+
+
+
+import org.apache.log4j.Logger;
 
 import com.imaginea.apps.crawler.MailCrawler;
 
@@ -39,7 +42,7 @@ public class MailCrawlerImpl {
 		if(crawler.canCrawl())
 			crawler.crawl();
 		else
-			log.severe(CANNOT_CRAWL);
+			log.error(CANNOT_CRAWL);
 	}
 	
 	public MailCrawler initCrawler(String url, int yr, int num_link_gen_worker, int num_dwn_worker){

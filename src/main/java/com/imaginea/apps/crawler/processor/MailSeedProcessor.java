@@ -10,7 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
@@ -32,7 +33,7 @@ public class MailSeedProcessor implements SeedProcessor{
 
 	private MailCrawler crawler;
 	
-	private static final Logger log = Logger.getLogger(MailSeedProcessor.class.getSimpleName());
+	private static final Logger log = Logger.getLogger(MailSeedProcessor.class);
 	
 	public MailSeedProcessor(MailCrawler crawler) {
 		this.crawler = crawler;
@@ -107,7 +108,7 @@ public class MailSeedProcessor implements SeedProcessor{
 	
 	private void handleError(ExecutionException e){
 		if(e.getCause() instanceof CannotConnectException)
-			log.severe(e.getMessage());					
+			log.error(e.getMessage());					
 		else
 			e.printStackTrace();
 	}

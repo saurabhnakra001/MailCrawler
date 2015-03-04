@@ -31,4 +31,8 @@ public class StringConstants {
 	
 	public static final String INVALID_INPUT_YEAR = "Entered year is invalid. Default set to "+DEFAULT_INPUT_YEAR;
 	
+	public static final String DECODE_ERROR = "Unable to decode ...";
+	
+	public static final String ENCODE_ERROR = "Unable to encode ...";
+	
 }
