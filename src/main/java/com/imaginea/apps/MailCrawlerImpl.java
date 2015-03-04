@@ -16,7 +16,6 @@ public class MailCrawlerImpl {
 
 	private static Logger log = Logger.getLogger(MailCrawlerImpl.class.getSimpleName());
 	
-	
 	public static void main(String[] args) {		
 		MailCrawlerImpl impl = new MailCrawlerImpl();
 		int cLinkGen = impl.getIntegerInput(StringConstants.NUM_LINK_GENERATE_WORKERS, StringConstants.INVALID_LINK_GENERATE_WORKERS);
@@ -34,8 +33,7 @@ public class MailCrawlerImpl {
 	}
 	
 	public MailCrawler initCrawler(int num_link_gen_worker, int num_dwn_worker){
-		MailCrawler crawler = new MailCrawler();
-		crawler.setValidator(new Validator());
+		MailCrawler crawler = new MailCrawler();		
 		if(num_link_gen_worker != -1)
 			crawler.setLinkGenerateWorkerCount(num_link_gen_worker);
 		if(num_dwn_worker != -1)

@@ -47,7 +47,8 @@ public class MailCrawler extends AbstractMailCrawler {
 	private static final Logger log = Logger.getLogger(MailCrawler.class.getName());	
 			
 	public MailCrawler() {		
-		this.seedProcessor = new MailSeedProcessor(this);		
+		this.setProcessor(new MailSeedProcessor(this));	
+		this.setValidator(new Validator());
 	}	
 		
 	/**
@@ -73,7 +74,7 @@ public class MailCrawler extends AbstractMailCrawler {
 			if(getValidator().isValidPageLink(href)){
 				String urlSuffix = Utility.urlSuffixOfUrl(href);				
 				Link link = new Link(anchor, Link.LinkType.PAGE);				
-				System.out.println("Processing : "+link);
+				log.info("Processing : "+link);
 				if(!links.contains(link))
 					links.add(link);
 			}
@@ -122,7 +123,10 @@ public class MailCrawler extends AbstractMailCrawler {
 		boolean isValid = false;
 		try {
 			isValid = webClient.getPage(StringConstants.BASEURL) != null;
-		} catch (Exception e) {		
+		}catch(UnknownHostException e){
+			log.severe(StringConstants.CHECK_INTERNET_CONNECTION);
+		}
+		catch (Exception e) {		
 			e.printStackTrace();
 		} 
 		return isValid;

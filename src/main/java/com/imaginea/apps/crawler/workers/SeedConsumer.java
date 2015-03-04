@@ -56,7 +56,8 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 					download(folder, url, fileName);
 					rec.downloaded();
 				} catch (Exception e) {
-					log.severe("Unable to download : "+url);
+					log.severe("Unable to download : "+url+"\n");
+					e.printStackTrace();
 					seed.setDownloadFailed();
 					rec.failed();
 				}							

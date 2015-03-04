@@ -107,7 +107,7 @@ public class MailSeedProcessor implements SeedProcessor{
 	
 	public void printStatistics(List<Future<WorkerRecord>> futures) throws InterruptedException, ExecutionException{
 		for(Future<WorkerRecord> future : futures){
-		    System.out.println(future.get().status());
+		    log.info(future.get().status());
 		}
 	}
 	
