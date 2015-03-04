@@ -9,13 +9,21 @@ package com.imaginea.apps.crawler;
 
 public class MailSeed {
 	
-	private String id, urlSuffix;
-	
+	private String id, urlSuffix, baseUrl;
+
 	private boolean downloadFailed;
 	
 	public MailSeed(String id, String urlSuffix){
 		this.id = id;
 		this.urlSuffix = urlSuffix;
+	}
+
+	public String getBaseUrl() {
+		return baseUrl;
+	}
+
+	public void setBaseUrl(String url) {
+		this.baseUrl = url;
 	}
 	
 	public String getId(){
@@ -23,7 +31,7 @@ public class MailSeed {
 	}
 	
 	public String getDownloadUrl(){
-		return StringConstants.BASEURL + urlSuffix + "/raw/"+id;	
+		return getBaseUrl() + urlSuffix + "/raw/"+id;	
 	}
 	
 	public String getUrlSuffix(){

@@ -1,11 +1,5 @@
 package com.imaginea.apps.crawler;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
  * @author vamsi emani
@@ -13,8 +7,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  */
 public class Validator {
 
+	private AbstractMailCrawler crawler;
+
+	public Validator(AbstractMailCrawler crawler) {
+		this.crawler = crawler;
+	}
+
 	public boolean isValidPageLink(String href){
-		return href.contains(StringConstants.INPUT_YEAR) && href.contains("mbox")
+		return href.contains(crawler.getInputYear()) && href.contains("mbox")
 				&& !href.contains("author") && !href.contains("date");
 	}
 	

@@ -17,11 +17,18 @@ public class StringConstants {
 	
 	public static final String INVALID_LINK_GENERATE_WORKERS = "Invalid input, default link generate worker thread count set to 1";
 	
-	public static final String INPUT_YEAR = "2014";
+	public static final String DEFAULT_INPUT_YEAR = "2014";
 
 	public static final String NUM_LINK_GENERATE_WORKERS = "Enter number of link generate worker threads : ";
 
-	public static final String CHECK_INTERNET_CONNECTION = "Please check your internet connection";
+	public static final String CHECK_INTERNET_CONNECTION = "Please check your internet connection ...";
 	
+	public static final String CHECK_URL_OR_INTERNET_CONNECTION = "Please check entered url and internet connection ...";
+
+	public static final Object ENTER_URL = "Enter url : ";
+
+	public static final String ENTER_INPUT_YEAR = "Enter year : ";
+	
+	public static final String INVALID_INPUT_YEAR = "Entered year is invalid. Default set to "+DEFAULT_INPUT_YEAR;
 	
 }

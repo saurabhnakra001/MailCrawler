@@ -28,7 +28,7 @@ import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 public class MailSeedProcessor implements SeedProcessor{
 	
 	/** Use a blocking queue to enable multi-threading in future and to withstand internet connection loss **/
-	private LinkedBlockingQueue<MailSeed> queue = new LinkedBlockingQueue<MailSeed>();	
+	private LinkedBlockingQueue<MailSeed> queue;	
 
 	private MailCrawler crawler;
 	
@@ -36,6 +36,7 @@ public class MailSeedProcessor implements SeedProcessor{
 	
 	public MailSeedProcessor(MailCrawler crawler) {
 		this.crawler = crawler;
+		this.queue = new LinkedBlockingQueue<MailSeed>();
 	}
 		
 	public void addSeed(MailSeed seed){
@@ -59,7 +60,7 @@ public class MailSeedProcessor implements SeedProcessor{
 		ConcurrentHashMap<String, MailSeed> map = new ConcurrentHashMap<String, MailSeed>();
 		for( int i = 0 ; i < number_of_workers ; i++){
 			SeedProducer worker = new SeedProducer(queue, links);
-			worker.setWebClient(crawler.getWebClient());
+			worker.setCrawler(crawler);
 			worker.setVisited(map);
 			tasks.add(worker);
 		}
@@ -106,10 +107,12 @@ public class MailSeedProcessor implements SeedProcessor{
 	
 	private void handleError(ExecutionException e){
 		if(e.getCause() instanceof CannotConnectException)
-			log.severe(e.getMessage());
+			log.severe(e.getMessage());					
 		else
 			e.printStackTrace();
 	}
+		
+	
 	
 	public void printStatistics(List<Future<WorkerRecord>> futures) throws InterruptedException, ExecutionException{
 		for(Future<WorkerRecord> future : futures){

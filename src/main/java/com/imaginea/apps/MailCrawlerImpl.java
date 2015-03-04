@@ -1,11 +1,19 @@
 package com.imaginea.apps;
 
+import static com.imaginea.apps.crawler.StringConstants.CANNOT_CRAWL;
+import static com.imaginea.apps.crawler.StringConstants.DEFAULT_INPUT_YEAR;
+import static com.imaginea.apps.crawler.StringConstants.ENTER_INPUT_YEAR;
+import static com.imaginea.apps.crawler.StringConstants.ENTER_URL;
+import static com.imaginea.apps.crawler.StringConstants.INVALID_INPUT_YEAR;
+import static com.imaginea.apps.crawler.StringConstants.INVALID_LINK_GENERATE_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.INVALID_NUM_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.NUM_DOWNLOAD_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.NUM_LINK_GENERATE_WORKERS;
+
 import java.util.Scanner;
 import java.util.logging.Logger;
 
 import com.imaginea.apps.crawler.MailCrawler;
-import com.imaginea.apps.crawler.StringConstants;
-import com.imaginea.apps.crawler.Validator;
 
 /**
  * 
@@ -18,9 +26,11 @@ public class MailCrawlerImpl {
 	
 	public static void main(String[] args) {		
 		MailCrawlerImpl impl = new MailCrawlerImpl();
-		int cLinkGen = impl.getIntegerInput(StringConstants.NUM_LINK_GENERATE_WORKERS, StringConstants.INVALID_LINK_GENERATE_WORKERS);
-		int cDownload = impl.getIntegerInput(StringConstants.NUM_DOWNLOAD_WORKERS, StringConstants.INVALID_NUM_WORKERS);	
-		MailCrawler crawler = impl.initCrawler(cLinkGen, cDownload);		
+		String url = impl.readConsole(ENTER_URL);
+		int year = impl.getIntegerInput(ENTER_INPUT_YEAR, INVALID_INPUT_YEAR);
+		int cLinkGen = impl.getIntegerInput(NUM_LINK_GENERATE_WORKERS, INVALID_LINK_GENERATE_WORKERS);
+		int cDownload = impl.getIntegerInput(NUM_DOWNLOAD_WORKERS, INVALID_NUM_WORKERS);		
+		MailCrawler crawler = impl.initCrawler(url, year, cLinkGen, cDownload);		
 		crawler.initializeWebClient();		
 		impl.runCrawler(crawler);		
 	}
@@ -29,11 +39,13 @@ public class MailCrawlerImpl {
 		if(crawler.canCrawl())
 			crawler.crawl();
 		else
-			log.severe(StringConstants.CANNOT_CRAWL);
+			log.severe(CANNOT_CRAWL);
 	}
 	
-	public MailCrawler initCrawler(int num_link_gen_worker, int num_dwn_worker){
-		MailCrawler crawler = new MailCrawler();		
+	public MailCrawler initCrawler(String url, int yr, int num_link_gen_worker, int num_dwn_worker){
+		MailCrawler crawler = new MailCrawler();	
+		crawler.setUrl(url);
+		crawler.setInputYear(Integer.toString(yr));
 		if(num_link_gen_worker != -1)
 			crawler.setLinkGenerateWorkerCount(num_link_gen_worker);
 		if(num_dwn_worker != -1)
@@ -55,6 +67,7 @@ public class MailCrawlerImpl {
 		try{
 			return Integer.parseInt(readConsole(msg));						
 		}catch(NumberFormatException e){
+			i = Integer.parseInt(DEFAULT_INPUT_YEAR);
 			log.info(exceptionMsg);					
 		}
 		return i;

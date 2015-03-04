@@ -22,9 +22,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
  * @author vamsi emani
  * Utility and helper methods here. 
  */
-public class Utility {
+public class Helper {
 	
-	public static String decodeUrl(String encodedUrl){
+	AbstractMailCrawler crawler;
+	
+	public Helper(AbstractMailCrawler crawler) {
+		this.crawler = crawler;
+	}
+	
+	public String decodeUrl(String encodedUrl){
 		String result = null;
 		try {
 			result = java.net.URLDecoder.decode(encodedUrl, "UTF-8");
@@ -34,7 +40,7 @@ public class Utility {
 		return result;
 	}
 	
-	public static String encodeUrl(String url){
+	public String encodeUrl(String url){
 		String result = null;
 		try {
 			result = java.net.URLEncoder.encode(url, "UTF-8");
@@ -44,8 +50,8 @@ public class Utility {
 		return result;
 	}
 			
-	public static String urlSuffixOfUrl(String href){
-		String urlSuffix = href.substring(href.indexOf(StringConstants.INPUT_YEAR));		
+	public String urlSuffixOfUrl(String href){
+		String urlSuffix = href.substring(href.indexOf(crawler.getInputYear()));		
 		urlSuffix = urlSuffix.substring(0, urlSuffix.indexOf("/"));
 		return urlSuffix;
 	}	

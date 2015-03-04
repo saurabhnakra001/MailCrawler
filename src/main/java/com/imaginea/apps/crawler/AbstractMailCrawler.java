@@ -23,7 +23,9 @@ public abstract class AbstractMailCrawler implements WebSpider {
 	private static int default_link_generate_worker_count = 1;
 	private int download_worker_count = default_download_worker_count;
 	private int link_generate_worker_count = default_link_generate_worker_count;
-	private Validator validator;;	
+	private Validator validator;
+	private Helper helper;	
+	private String url, inputYear;	
 
 	public void crawl() {
 		Queue<Link> pageLinks = collectHyperlinks();		
@@ -77,4 +79,28 @@ public abstract class AbstractMailCrawler implements WebSpider {
 		this.validator = validator;
 	}
 	
+	public Helper getHelper() {
+		return helper;
+	}
+
+	public void setHelper(Helper helper) {
+		this.helper = helper;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public String getInputYear() {
+		return inputYear;
+	}
+
+	public void setInputYear(String inputYear) {
+		this.inputYear = inputYear;
+	}
+		
 }

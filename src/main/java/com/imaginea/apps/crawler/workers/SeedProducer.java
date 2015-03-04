@@ -1,3 +1,4 @@
+
 package com.imaginea.apps.crawler.workers;
 
 import java.io.IOException;
@@ -14,13 +15,15 @@ import java.util.logging.Logger;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.imaginea.apps.crawler.Link;
+import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
 import com.imaginea.apps.crawler.StringConstants;
-import com.imaginea.apps.crawler.Utility;
+import com.imaginea.apps.crawler.Helper;
 import com.imaginea.apps.crawler.Validator;
 import com.imaginea.apps.crawler.exceptions.CannotConnectException;
 import com.imaginea.apps.crawler.exceptions.CrawlerException;
@@ -36,21 +39,17 @@ import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 public class SeedProducer implements Callable<WorkerRecord>{
 
 	private BlockingQueue<MailSeed> queue;
-	private Queue<Link> pageLinks;
-	private WebClient webClient;
+	private Queue<Link> pageLinks;	
 	private ConcurrentHashMap<String, MailSeed> visited;
 	private WorkerRecord record;
 	private Logger log = Logger.getLogger(SeedProducer.class.getName());
+	private MailCrawler crawler;
 	
 	public SeedProducer(BlockingQueue<MailSeed> queue, Queue<Link> links) {
 		this.pageLinks = links;
 		this.queue = queue;
 		this.record = new SeedProducerRecord();
-	}
-	
-	public void setWebClient(WebClient webClient){
-		this.webClient = webClient;
-	}
+	}		
 	
 	public void processLinks(Queue<Link> collected) throws CrawlerException {	
 		Iterator<Link> it = collected.iterator();
@@ -62,7 +61,8 @@ public class SeedProducer implements Callable<WorkerRecord>{
 				if(link.isPageLink()){																	
 					Object next = link.getAnchor().click();
 					if(next instanceof HtmlPage){
-						HtmlPage nextResp = HTMLParser.parseHtml(((Page) next).getWebResponse(), webClient.getCurrentWindow());
+						WebWindow window = crawler.getWebClient().getCurrentWindow();
+						HtmlPage nextResp = HTMLParser.parseHtml(((Page) next).getWebResponse(), window);
 						createSeeds((HtmlPage) nextResp);
 					}														
 				}
@@ -80,15 +80,17 @@ public class SeedProducer implements Callable<WorkerRecord>{
 	public void createSeeds(HtmlPage page){				
 		for (HtmlAnchor anchor : page.getAnchors()) {
 			String href = anchor.getHrefAttribute();
-			if(new Validator().isValidMailLink(href) && visited.get(href) == null){												
-				String urlStr = anchor.getPage().getUrl().toString();									
-				String decodedHref = Utility.decodeUrl(Utility.encodeUrl(href));
-				MailSeed seed = new MailSeed(decodedHref, Utility.urlSuffixOfUrl(urlStr));				
+			if(crawler.getValidator().isValidMailLink(href) && visited.get(href) == null){												
+				String urlStr = anchor.getPage().getUrl().toString();
+				Helper hlp = crawler.getHelper();
+				String decodedHref = hlp.decodeUrl(hlp.encodeUrl(href));
+				MailSeed seed = new MailSeed(decodedHref, hlp.urlSuffixOfUrl(urlStr));		
+				seed.setBaseUrl(crawler.getUrl());
 				boolean success = queue.offer(seed);
 				if(success)
 					((SeedProducerRecord) record).seed();
 				visited.put(href, seed);				
-				log.info("Created seed : "+href);
+				log.info("Added seed : "+href);
 			}
 		}						
 	}
@@ -103,6 +105,10 @@ public class SeedProducer implements Callable<WorkerRecord>{
 
 	public void setVisited(ConcurrentHashMap<String, MailSeed> map) {		
 		this.visited = map;
+	}
+
+	public void setCrawler(MailCrawler crawler) {
+		this.crawler = crawler;		
 	}
 
 }

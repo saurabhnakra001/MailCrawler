@@ -2,27 +2,25 @@ package com.imaginea.apps.crawler;
 
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 
+/**
+ * @author vamsi emani
+ */
+
 public class Link {
 
-	private String urlSuffix;
-	
+	private String urlSuffix;	
+
 	private HtmlAnchor anchor; 
 
 	private LinkType linkType;
-
+			
 	public enum LinkType{
 		PAGE, MAIL;
 	}
 				
 	public Link(HtmlAnchor url, LinkType linkType) {		
 		this.anchor = url;
-		this.setLinkType(linkType);
-		if(linkType.equals(LinkType.MAIL)){
-			String urlStr = url.getPage().getUrl().toString();	
-			this.urlSuffix = Utility.urlSuffixOfUrl(urlStr);;
-		}else if(linkType.equals(LinkType.PAGE)){
-			this.urlSuffix = Utility.urlSuffixOfUrl(this.href());
-		}		
+		this.setLinkType(linkType);		
 	}
 	
 	public String href(){
@@ -35,6 +33,10 @@ public class Link {
 	
 	public boolean isMailLink(){
 		return this.linkType == LinkType.MAIL;
+	}
+	
+	public void setUrlSuffix(String urlSuffix) {
+		this.urlSuffix = urlSuffix;
 	}
 	
 	public String getUrlSuffix(){
@@ -76,4 +78,5 @@ public class Link {
 	public int hashCode() {		
 		return this.href().hashCode();		
 	}
+	
 }

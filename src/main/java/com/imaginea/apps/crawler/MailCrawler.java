@@ -1,37 +1,16 @@
 package com.imaginea.apps.crawler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Queue;
-import java.util.Scanner;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import net.sourceforge.htmlunit.corejs.javascript.TopLevel;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.ScriptResult;
-import com.gargoylesoftware.htmlunit.StringWebResponse;
-import com.gargoylesoftware.htmlunit.TopLevelWindow;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.imaginea.apps.crawler.Link.LinkType;
 import com.imaginea.apps.crawler.processor.MailSeedProcessor;
 
 /** 
@@ -48,7 +27,8 @@ public class MailCrawler extends AbstractMailCrawler {
 			
 	public MailCrawler() {		
 		this.setProcessor(new MailSeedProcessor(this));	
-		this.setValidator(new Validator());
+		this.setValidator(new Validator(this));
+		this.setHelper(new Helper(this));
 	}	
 		
 	/**
@@ -72,8 +52,9 @@ public class MailCrawler extends AbstractMailCrawler {
 		for (HtmlAnchor anchor : page.getAnchors()) {
 			String href = anchor.getHrefAttribute();
 			if(getValidator().isValidPageLink(href)){
-				String urlSuffix = Utility.urlSuffixOfUrl(href);				
-				Link link = new Link(anchor, Link.LinkType.PAGE);				
+				String urlSuffix = getHelper().urlSuffixOfUrl(href);				
+				Link link = new Link(anchor, Link.LinkType.PAGE);	
+				link.setUrlSuffix(getHelper().urlSuffixOfUrl(link.href()));
 				log.info("Processing : "+link);
 				if(!links.contains(link))
 					links.add(link);
@@ -81,10 +62,6 @@ public class MailCrawler extends AbstractMailCrawler {
 		}	
 		return links;
 	}	
-	
-	public String getUrl(){
-		return StringConstants.BASEURL;
-	}
 		
 	/**
 	 * A headless browser (not a browser) that provides ability to 
@@ -122,9 +99,9 @@ public class MailCrawler extends AbstractMailCrawler {
 	public boolean validateInput(String relativeUrl) {
 		boolean isValid = false;
 		try {
-			isValid = webClient.getPage(StringConstants.BASEURL) != null;
+			isValid = webClient.getPage(getUrl()) != null;
 		}catch(UnknownHostException e){
-			log.severe(StringConstants.CHECK_INTERNET_CONNECTION);
+			log.severe(StringConstants.CHECK_URL_OR_INTERNET_CONNECTION);
 		}
 		catch (Exception e) {		
 			e.printStackTrace();
