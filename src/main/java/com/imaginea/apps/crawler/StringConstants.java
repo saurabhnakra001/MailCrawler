@@ -25,7 +25,7 @@ public class StringConstants {
 	
 	public static final String CHECK_URL_OR_INTERNET_CONNECTION = "Please check entered url and internet connection ...";
 
-	public static final Object ENTER_URL = "Enter url : ";
+	public static final Object ENTER_URL = "Enter url ("+BASEURL+") : ";
 
 	public static final String ENTER_INPUT_YEAR = "Enter year : ";
 	
