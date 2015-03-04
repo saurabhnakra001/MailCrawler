@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import com.imaginea.apps.crawler.MailSeed;
 import com.imaginea.apps.crawler.StringConstants;
 import com.imaginea.apps.crawler.exceptions.CannotConnectException;
+import com.imaginea.apps.crawler.exceptions.CrawlerException;
 import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
@@ -46,7 +47,7 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 		rbc.close();
 	}
 
-	public WorkerRecord call() throws Exception {			
+	public WorkerRecord call() throws CrawlerException, InterruptedException  {			
 		SeedConsumerRecord rec = ((SeedConsumerRecord) record);
 		rec.setOwner(Thread.currentThread());
 		MailSeed seed = null;
@@ -57,7 +58,7 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size()+1)+".txt";
 				url = seed.getDownloadUrl();				
 				String folder = "output"+File.separator+seed.getYear()+File.separator+seed.getMonth();
-				//log.info("\n>> DOWNLOADING FROM :\n\t"+url+ " to output/"+fileName);				
+				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ "\n\tto output/"+fileName);				
 				download(folder, url, fileName);
 				rec.downloaded();																	
 			}
@@ -66,8 +67,8 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 			seed.setDownloadFailed();
 			((SeedConsumerRecord) record).failed();
 			throw new CannotConnectException(msg);
-		}catch (InterruptedException e1) {				
-			e1.printStackTrace();
+		}catch (IOException e) {
+			throw new CrawlerException(e);
 		}	
 		return record;
 	}
