@@ -1,6 +1,6 @@
 package com.imaginea.apps.crawler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.Queue;
@@ -8,6 +8,8 @@ import java.util.Queue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.imaginea.apps.crawler.processor.MailSeedProcessor;
 
 /**
  * 
@@ -20,7 +22,10 @@ public class MailCrawlerTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		this.crawler = new MailCrawler();		
+		this.crawler = new MailCrawler();	
+		this.crawler.setProcessor(new MailSeedProcessor	(crawler));	
+		this.crawler.setValidator(new Validator(crawler));
+		this.crawler.setHelper(new Helper(crawler));
 		this.crawler.setInputYear("2014");
 		this.crawler.setUrl("http://mail-archives.apache.org/mod_mbox/maven-users/");
 		this.crawler.setDownloadWorkerCount(1);

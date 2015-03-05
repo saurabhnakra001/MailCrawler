@@ -18,11 +18,11 @@ import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
 public abstract class AbstractMailCrawler implements WebSpider {
 		
-	protected MailSeedProcessor seedProcessor;			
+	protected MailSeedProcessor processor;			
 	private static int default_download_worker_count = 1;
 	private static int default_link_generate_worker_count = 1;
-	private int download_worker_count = default_download_worker_count;
-	private int link_generate_worker_count = default_link_generate_worker_count;
+	private int downloadWorkerCount = default_download_worker_count;
+	private int linkGenerateWorkerCount = default_link_generate_worker_count;
 	private Validator validator;
 	private Helper helper;	
 	private String url, inputYear;	
@@ -34,7 +34,7 @@ public abstract class AbstractMailCrawler implements WebSpider {
 	}
 	
 	public void generateSeeds(Queue<Link> pageLinks){
-		getProcessor().generateSeeds(link_generate_worker_count, pageLinks);
+		getProcessor().generateSeeds(linkGenerateWorkerCount, pageLinks);
 	}		
 	
 	public List<Future<WorkerRecord>> download() {		
@@ -48,27 +48,27 @@ public abstract class AbstractMailCrawler implements WebSpider {
 	}
 
 	public void setDownloadWorkerCount(int num){
-		this.download_worker_count = num;
+		this.downloadWorkerCount = num;
 	}
 	
 	public void setLinkGenerateWorkerCount(int num){
-		this.link_generate_worker_count = num;
+		this.linkGenerateWorkerCount = num;
 	}
 	
 	public int getLinkGenerateWorkerCount(){
-		return this.link_generate_worker_count;
+		return this.linkGenerateWorkerCount;
 	}
 	
 	public int getDownloadWorkerCount(){
-		return this.download_worker_count;
+		return this.downloadWorkerCount;
 	}
 	
 	public void setProcessor(MailSeedProcessor processor){
-		this.seedProcessor = processor;
+		this.processor = processor;
 	}
 	
 	public MailSeedProcessor getProcessor(){
-		return this.seedProcessor;
+		return this.processor;
 	}
 	
 	public Validator getValidator() {

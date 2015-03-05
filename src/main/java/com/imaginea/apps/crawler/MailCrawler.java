@@ -25,9 +25,9 @@ public class MailCrawler extends AbstractMailCrawler {
 	private static final Logger log = Logger.getLogger(MailCrawler.class);	
 			
 	public MailCrawler() {		
-		this.setProcessor(new MailSeedProcessor(this));	
+		/*this.setProcessor(new MailSeedProcessor(this));	
 		this.setValidator(new Validator(this));
-		this.setHelper(new Helper(this));
+		this.setHelper(new Helper(this));*/
 	}	
 		
 	/**

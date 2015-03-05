@@ -17,6 +17,7 @@ public class ValidatorTest {
 	@Before
 	public void setUp() throws Exception {
 		crawler = new MailCrawler();
+		crawler.setValidator(new Validator(crawler));
 		crawler.setInputYear("2014");
 	}	
 

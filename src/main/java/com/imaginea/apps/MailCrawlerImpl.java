@@ -14,7 +14,11 @@ import java.util.Scanner;
 
 
 
+
+
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.imaginea.apps.crawler.MailCrawler;
 
@@ -46,7 +50,8 @@ public class MailCrawlerImpl {
 	}
 	
 	public MailCrawler initCrawler(String url, int yr, int num_link_gen_worker, int num_dwn_worker){
-		MailCrawler crawler = new MailCrawler();	
+		ApplicationContext context = new ClassPathXmlApplicationContext("SpringBeans.xml");
+		MailCrawler crawler = (MailCrawler) context.getBean("mailCrawlerBean");
 		crawler.setUrl(url);
 		crawler.setInputYear(Integer.toString(yr));
 		if(num_link_gen_worker != -1)

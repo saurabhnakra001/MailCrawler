@@ -3,7 +3,6 @@ package com.imaginea.apps.crawler;
 
 /**
  * @author vamsi emani
-
  */
 public class Validator {
 

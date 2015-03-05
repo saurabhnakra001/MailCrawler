@@ -18,6 +18,7 @@ public class HelperTest {
 	@Before
 	public void setUp() throws Exception {
 		crawler = new MailCrawler();
+		crawler.setHelper(new Helper(crawler));
 		crawler.setInputYear("2014");
 		this.url = "http://mail-archives.apache.org/mod_mbox/maven-users/201412.mbox/<20141201165933.302fe3b8@linux-du93.site>";
 	}	
