@@ -47,6 +47,14 @@ public abstract class AbstractMailCrawler implements WebSpider {
 		return true;
 	}
 
+	public boolean canResume(){
+		return getProcessor().isResumeState() && getProcessor().hasSeeds();
+	}		
+	
+	public void resume(){		
+		download();
+	}
+	
 	public void setDownloadWorkerCount(int num){
 		this.downloadWorkerCount = num;
 	}

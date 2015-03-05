@@ -60,16 +60,15 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 				seed = queue.take();				
 				String fileName = "msg-"+seed.getUrlSuffix() + (queue.size()+1)+".txt";
 				url = seed.getDownloadUrl();				
-				String folder = "output"+File.separator+seed.getYear()+File.separator+seed.getMonth();
-				log.info("\n>> DOWNLOADING FROM :\n\t"+url+ "\n\tto output/"+fileName);				
+				String folder = "output"+File.separator+seed.getYear()+File.separator+seed.getMonth();								
 				download(folder, url, fileName);
+				log.info("\n>> DOWNLOADED FROM :\n\t"+url+ "\n\tto output/"+fileName);
 				rec.downloaded();																	
 			}
 		}catch(IOException e){
-			String msg = StringConstants.CHECK_INTERNET_CONNECTION+". Unable to download : "+url;
+			String msg = ". Unable to download : "+url;
 			seed.setDownloadFailed();
 			((SeedConsumerRecord) record).failed();
-			throw new CannotConnectException(msg);
 		}	
 		return record;
 	}

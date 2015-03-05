@@ -1,5 +1,10 @@
 package com.imaginea.apps.crawler.processor;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -16,6 +21,7 @@ import org.apache.log4j.Logger;
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
+import com.imaginea.apps.crawler.StringConstants;
 import com.imaginea.apps.crawler.exceptions.CannotConnectException;
 import com.imaginea.apps.crawler.workers.SeedConsumer;
 import com.imaginea.apps.crawler.workers.SeedProducer;
@@ -35,19 +41,16 @@ public class MailSeedProcessor implements SeedProcessor{
 	
 	private static final Logger log = Logger.getLogger(MailSeedProcessor.class);
 	
+	private boolean resumeState = false;		
+
 	public MailSeedProcessor(MailCrawler crawler) {
 		this.crawler = crawler;
-		this.queue = new LinkedBlockingQueue<MailSeed>();
-	}
-		
-	public void addSeed(MailSeed seed){
-		queue.offer(seed);		
-	}
+		this.queue = reloadQueueFromDisk();
+	}			
 	
-	public void addSeeds(List<MailSeed> seeds){
-		for(MailSeed seed : seeds)
-			addSeed(seed);
-	}	
+	public boolean hasSeeds(){
+		return !queue.isEmpty();
+	}
 	
 	public List<Callable<WorkerRecord>> getSeedConsumers(int number_of_workers){
 		List<Callable<WorkerRecord>> tasks = new ArrayList<Callable<WorkerRecord>>();
@@ -111,24 +114,51 @@ public class MailSeedProcessor implements SeedProcessor{
 			log.error(e.getMessage());					
 		else
 			e.printStackTrace();
+		saveQueueToDisk();
 	}
 		
+	private void saveQueueToDisk(){
+		try {
+			FileOutputStream fout = new FileOutputStream(StringConstants.QUEUE_DAT_FILE);
+		    ObjectOutputStream oos = new ObjectOutputStream(fout);
+		    oos.writeObject(queue);
+		    oos.close();
+		}
+		catch (Exception e) { 
+			e.printStackTrace(); 
+		}
+	}
 	
+	private LinkedBlockingQueue<MailSeed> reloadQueueFromDisk(){		
+		try {
+			FileInputStream fin = new FileInputStream(StringConstants.QUEUE_DAT_FILE);
+		    ObjectInputStream ois = new ObjectInputStream(fin);
+		    queue = (LinkedBlockingQueue<MailSeed>) ois.readObject();
+		    if(hasSeeds())
+		    	setResumeState(true);
+		    ois.close();		    
+		}
+		catch (Exception e) {
+			queue = new LinkedBlockingQueue<MailSeed>();			
+		}finally{
+			File datFile = new File(StringConstants.QUEUE_DAT_FILE);
+			if(datFile.exists())
+				datFile.delete();
+		}
+		return queue;
+	}
 	
 	public void printStatistics(List<Future<WorkerRecord>> futures) throws InterruptedException, ExecutionException{
 		for(Future<WorkerRecord> future : futures){
 		    log.info(future.get().status());
 		}
-	}
-	
-	public List<MailSeed> getFailedSeeds(){
-		List failed = new ArrayList();
-		MailSeed[] seeds = (MailSeed[]) queue.toArray();
-		for (int i = 0; i < seeds.length; i++) {
-			if(seeds[i].isDownloadFailed())
-				failed.add(seeds[i]);
-		}
-		return failed;
-	}
+	}		
 			
+	public boolean isResumeState() {
+		return resumeState;
+	}
+
+	public void setResumeState(boolean resumeState) {
+		this.resumeState = resumeState;
+	}
 }

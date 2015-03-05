@@ -1,5 +1,7 @@
 package com.imaginea.apps.crawler;
 
+import java.io.Serializable;
+
 /**
  * @author vamsi emani
  * 
@@ -7,7 +9,7 @@ package com.imaginea.apps.crawler;
  * that is to be extracted and downloaded.
  */
 
-public class MailSeed {
+public class MailSeed implements Serializable{
 	
 	private String id, urlSuffix, baseUrl;
 

@@ -35,6 +35,8 @@ public class StringConstants {
 	
 	public static final String ENCODE_ERROR = "Unable to encode ...";
 	
-	public static final String CONFIG_FILE = "config.properties";	
+	public static final String CONFIG_FILE = "config.properties";
+	
+	public static final String QUEUE_DAT_FILE = "queue.dat";
 	
 }

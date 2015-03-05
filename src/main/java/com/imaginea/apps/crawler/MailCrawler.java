@@ -63,7 +63,7 @@ public class MailCrawler extends AbstractMailCrawler {
 	}	
 		
 	/**
-	 * A headless browser (not a browser) that provides ability to 
+	 * A headless browser that provides ability to 
 	 * execute browser js ..
 	 */
 	public void initializeWebClient(){

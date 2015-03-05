@@ -32,39 +32,53 @@ public class MailCrawlerImpl {
 	private static Logger log = Logger.getLogger(MailCrawlerImpl.class.getSimpleName());
 	
 	public static void main(String[] args) {		
-		MailCrawlerImpl impl = new MailCrawlerImpl();
-		String url = impl.readConsole(ENTER_URL);
-		int year = impl.getIntegerInput(ENTER_INPUT_YEAR, INVALID_INPUT_YEAR);
-		int cLinkGen = impl.getIntegerInput(NUM_LINK_GENERATE_WORKERS, INVALID_LINK_GENERATE_WORKERS);
-		int cDownload = impl.getIntegerInput(NUM_DOWNLOAD_WORKERS, INVALID_NUM_WORKERS);		
-		MailCrawler crawler = impl.initCrawler(url, year, cLinkGen, cDownload);		
-		crawler.initializeWebClient();		
-		impl.runCrawler(crawler);		
+		ApplicationContext context = new ClassPathXmlApplicationContext("SpringBeans.xml");
+		MailCrawler crawler = (MailCrawler) context.getBean("mailCrawlerBean");
+		if(crawler.canResume())
+			crawler.resume();
+		else{
+			MailCrawlerImpl impl = new MailCrawlerImpl();			
+			crawler.setUrl(impl.getUrl());
+			crawler.setInputYear(impl.getYear());
+			int producerCount = impl.getLinkGenerateWorkerCount();
+			int consumerCount = impl.getDownloadWorkerCount();							
+			impl.runCrawler(crawler, producerCount, consumerCount);
+		}
+		
 	}
-
-	public void runCrawler(MailCrawler crawler){
+		
+	public void runCrawler(MailCrawler crawler, int producerCount, int consumerCount){		
+		if(producerCount != -1)
+			crawler.setLinkGenerateWorkerCount(producerCount);
+		if(consumerCount != -1)
+			crawler.setDownloadWorkerCount(consumerCount);		
+		crawler.initializeWebClient();						
 		if(crawler.canCrawl())
 			crawler.crawl();
 		else
 			log.error(CANNOT_CRAWL);
 	}
 	
-	public MailCrawler initCrawler(String url, int yr, int num_link_gen_worker, int num_dwn_worker){
-		ApplicationContext context = new ClassPathXmlApplicationContext("SpringBeans.xml");
-		MailCrawler crawler = (MailCrawler) context.getBean("mailCrawlerBean");
-		crawler.setUrl(url);
-		crawler.setInputYear(Integer.toString(yr));
-		if(num_link_gen_worker != -1)
-			crawler.setLinkGenerateWorkerCount(num_link_gen_worker);
-		if(num_dwn_worker != -1)
-			crawler.setDownloadWorkerCount(num_dwn_worker);
-		return crawler;
-	}
-	
 	public String readConsole(Object msg){
 		Scanner scanner = new Scanner(System.in);
 		System.out.println(msg);
 		return scanner.nextLine();
+	}
+	
+	public String getUrl(){
+		return readConsole(ENTER_URL);
+	}
+	
+	public String getYear(){
+		return Integer.toString(getIntegerInput(ENTER_INPUT_YEAR, INVALID_INPUT_YEAR));
+	}
+	
+	public int getDownloadWorkerCount(){
+		return getIntegerInput(NUM_DOWNLOAD_WORKERS, INVALID_NUM_WORKERS);
+	}
+	
+	public int getLinkGenerateWorkerCount(){
+		return getIntegerInput(NUM_LINK_GENERATE_WORKERS, INVALID_LINK_GENERATE_WORKERS);
 	}
 	
 	/**
