@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-
-
 import org.apache.log4j.Logger;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
@@ -41,7 +37,7 @@ public class MailCrawler extends AbstractMailCrawler {
 	public Queue<Link> collectHyperlinks() {	
 		Queue<Link> pageLinks = new LinkedBlockingQueue<Link>();
 		try {	
-			log.info(getUrl());
+			log.info("Collecting hyperlinks on : "+getUrl());
 			HtmlPage page = webClient.getPage(getUrl());	
 			HtmlPage resp = HTMLParser.parseHtml(page.getWebResponse(), webClient.getCurrentWindow());
 			pageLinks = processPage(resp, pageLinks);								
@@ -71,15 +67,17 @@ public class MailCrawler extends AbstractMailCrawler {
 	 * execute browser js ..
 	 */
 	public void initializeWebClient(){
-		webClient = new WebClient(BrowserVersion.CHROME);
-		webClient.getOptions().setTimeout(20000);
-	    webClient.waitForBackgroundJavaScript(60000);
-	    webClient.getOptions().setRedirectEnabled(true);
-	    webClient.getOptions().setJavaScriptEnabled(true);
+		Config conf = new Config().load();		
+		Helper help = getHelper();
+		webClient = new WebClient(BrowserVersion.CHROME);		
+		webClient.getOptions().setTimeout(conf.timeout());		
+		webClient.waitForBackgroundJavaScript(conf.waitForBackgroundJavaScript());
+		webClient.getOptions().setRedirectEnabled(conf.redirectedEnabled());		
+		webClient.getOptions().setJavaScriptEnabled(conf.javascriptEnabled());
+		webClient.getOptions().setCssEnabled(conf.cssEnabled()); 
+		webClient.getOptions().setUseInsecureSSL(conf.useInsecureSSL());			    		    
 	   // webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-	    //webClient.getOptions().setThrowExceptionOnScriptError(false);
-	    webClient.getOptions().setCssEnabled(false);
-	    webClient.getOptions().setUseInsecureSSL(true);
+	    //webClient.getOptions().setThrowExceptionOnScriptError(false);	    	    
 	}
 	
 	public WebClient getWebClient(){
