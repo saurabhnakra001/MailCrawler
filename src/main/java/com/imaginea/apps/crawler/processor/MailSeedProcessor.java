@@ -1,9 +1,9 @@
 package com.imaginea.apps.crawler.processor;
 
-import static com.imaginea.apps.crawler.StringConstants.QUEUE_DAT_FILE;
-import static com.imaginea.apps.crawler.StringConstants.INTERRUPT_ERROR;
-import static com.imaginea.apps.crawler.StringConstants.EXECUTION_ERROR;
-import static com.imaginea.apps.crawler.StringConstants.DISK_LOAD_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.FILENAMES.QUEUE_DAT_FILE;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.INTERRUPT_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.EXECUTION_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.DISK_LOAD_ERROR;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

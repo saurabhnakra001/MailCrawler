@@ -10,8 +10,8 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import static com.imaginea.apps.crawler.StringConstants.CHECK_URL_OR_INTERNET_CONNECTION;
-import static com.imaginea.apps.crawler.StringConstants.CANNOT_COLLECT_LINKS;;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.CHECK_URL_OR_INTERNET_CONNECTION;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.CANNOT_COLLECT_LINKS;;
 
 /** 
  * @author vamsi emani

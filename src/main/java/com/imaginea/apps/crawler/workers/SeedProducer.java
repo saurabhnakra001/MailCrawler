@@ -1,7 +1,7 @@
 
 package com.imaginea.apps.crawler.workers;
 
-import static com.imaginea.apps.crawler.StringConstants.CHECK_INTERNET_CONNECTION;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.CHECK_INTERNET_CONNECTION;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Iterator;

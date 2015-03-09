@@ -1,7 +1,7 @@
 package com.imaginea.apps.crawler;
 
-import static com.imaginea.apps.crawler.StringConstants.DECODE_ERROR;
-import static com.imaginea.apps.crawler.StringConstants.ENCODE_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.DECODE_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.ENCODE_ERROR;
 import java.io.UnsupportedEncodingException;
 import org.apache.log4j.Logger;
 /**

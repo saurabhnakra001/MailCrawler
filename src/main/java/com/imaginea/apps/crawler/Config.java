@@ -1,6 +1,6 @@
 package com.imaginea.apps.crawler;
 
-import static com.imaginea.apps.crawler.StringConstants.CONFIG_FILE;
+import static com.imaginea.apps.crawler.StringConstants.FILENAMES.CONFIG_FILE;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;

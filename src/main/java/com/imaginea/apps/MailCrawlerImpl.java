@@ -1,14 +1,14 @@
 package com.imaginea.apps;
 
-import static com.imaginea.apps.crawler.StringConstants.CANNOT_CRAWL;
-import static com.imaginea.apps.crawler.StringConstants.DEFAULT_INPUT_YEAR;
-import static com.imaginea.apps.crawler.StringConstants.ENTER_INPUT_YEAR;
-import static com.imaginea.apps.crawler.StringConstants.ENTER_URL;
-import static com.imaginea.apps.crawler.StringConstants.INVALID_INPUT_YEAR;
-import static com.imaginea.apps.crawler.StringConstants.INVALID_LINK_GENERATE_WORKERS;
-import static com.imaginea.apps.crawler.StringConstants.INVALID_NUM_WORKERS;
-import static com.imaginea.apps.crawler.StringConstants.NUM_DOWNLOAD_WORKERS;
-import static com.imaginea.apps.crawler.StringConstants.NUM_LINK_GENERATE_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.CANNOT_CRAWL;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.DEFAULT_INPUT_YEAR;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.ENTER_INPUT_YEAR;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.ENTER_URL;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.INVALID_INPUT_YEAR;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.INVALID_LINK_GENERATE_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.INVALID_NUM_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.NUM_DOWNLOAD_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.NUM_LINK_GENERATE_WORKERS;
 import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
