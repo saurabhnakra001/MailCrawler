@@ -1,6 +1,7 @@
 
 package com.imaginea.apps.crawler.workers;
 
+import static com.imaginea.apps.crawler.StringConstants.CHECK_INTERNET_CONNECTION;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Iterator;
@@ -18,8 +19,7 @@ import com.imaginea.apps.crawler.Helper;
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
-import com.imaginea.apps.crawler.StringConstants;
-import com.imaginea.apps.crawler.exceptions.CannotConnectException;
+import com.imaginea.apps.crawler.exceptions.ConnectException;
 import com.imaginea.apps.crawler.exceptions.CrawlerException;
 import com.imaginea.apps.crawler.workers.records.SeedProducerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
@@ -62,11 +62,11 @@ public class SeedProducer implements Callable<WorkerRecord>{
 			}
 		}catch(RuntimeException e){
 			if(e.getCause() instanceof IOException || e.getCause() instanceof UnknownHostException)
-				throw new CannotConnectException(StringConstants.CHECK_INTERNET_CONNECTION, e.getCause());
+				throw new ConnectException(CHECK_INTERNET_CONNECTION, e.getCause());
 			else
 				throw new CrawlerException(e);
 		} catch (IOException e) {
-			throw new CannotConnectException(StringConstants.CHECK_INTERNET_CONNECTION, e.getCause());			
+			throw new ConnectException(CHECK_INTERNET_CONNECTION, e.getCause());			
 		} 
 	}
 	

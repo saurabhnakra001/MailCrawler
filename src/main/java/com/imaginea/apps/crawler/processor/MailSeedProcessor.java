@@ -1,5 +1,9 @@
 package com.imaginea.apps.crawler.processor;
 
+import static com.imaginea.apps.crawler.StringConstants.QUEUE_DAT_FILE;
+import static com.imaginea.apps.crawler.StringConstants.INTERRUPT_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.EXECUTION_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.DISK_LOAD_ERROR;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,14 +19,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import org.apache.log4j.Logger;
-
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
-import com.imaginea.apps.crawler.StringConstants;
-import com.imaginea.apps.crawler.exceptions.CannotConnectException;
+import com.imaginea.apps.crawler.exceptions.ConnectException;
 import com.imaginea.apps.crawler.workers.SeedConsumer;
 import com.imaginea.apps.crawler.workers.SeedProducer;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
@@ -81,7 +82,7 @@ public class MailSeedProcessor implements SeedProcessor{
 			futures = executorService.invokeAll(getSeedConsumers(number_of_workers));
 			printStatistics(futures);
 		} catch (InterruptedException e) {			
-			e.printStackTrace();
+			log.error(INTERRUPT_ERROR, e);
 		} catch (ExecutionException e) {			
 			handleError(e);
 		}		
@@ -101,7 +102,7 @@ public class MailSeedProcessor implements SeedProcessor{
 			futures = executorService.invokeAll(getSeedProducers(number_of_workers, links));
 			printStatistics(futures);
 		} catch (InterruptedException e) {			
-			e.printStackTrace();
+			log.error(INTERRUPT_ERROR, e);
 		} catch (ExecutionException e) {
 			handleError(e);
 		}
@@ -110,28 +111,28 @@ public class MailSeedProcessor implements SeedProcessor{
 	}
 	
 	private void handleError(ExecutionException e){
-		if(e.getCause() instanceof CannotConnectException)
+		if(e.getCause() instanceof ConnectException)
 			log.error(e.getMessage());					
 		else
-			e.printStackTrace();
+			log.error(EXECUTION_ERROR, e);
 		saveQueueToDisk();
 	}
 		
 	private void saveQueueToDisk(){
 		try {
-			FileOutputStream fout = new FileOutputStream(StringConstants.QUEUE_DAT_FILE);
+			FileOutputStream fout = new FileOutputStream(QUEUE_DAT_FILE);
 		    ObjectOutputStream oos = new ObjectOutputStream(fout);
 		    oos.writeObject(queue);
 		    oos.close();
 		}
 		catch (Exception e) { 
-			e.printStackTrace(); 
+			log.error(DISK_LOAD_ERROR, e);
 		}
 	}
 	
 	private LinkedBlockingQueue<MailSeed> reloadQueueFromDisk(){		
 		try {
-			FileInputStream fin = new FileInputStream(StringConstants.QUEUE_DAT_FILE);
+			FileInputStream fin = new FileInputStream(QUEUE_DAT_FILE);
 		    ObjectInputStream ois = new ObjectInputStream(fin);
 		    queue = (LinkedBlockingQueue<MailSeed>) ois.readObject();
 		    if(hasSeeds())
@@ -141,7 +142,7 @@ public class MailSeedProcessor implements SeedProcessor{
 		catch (Exception e) {
 			queue = new LinkedBlockingQueue<MailSeed>();			
 		}finally{
-			File datFile = new File(StringConstants.QUEUE_DAT_FILE);
+			File datFile = new File(QUEUE_DAT_FILE);
 			if(datFile.exists())
 				datFile.delete();
 		}

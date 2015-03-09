@@ -33,10 +33,8 @@ public class MailCrawlerImpl {
 		else{
 			MailCrawlerImpl impl = new MailCrawlerImpl();			
 			crawler.setUrl(impl.getUrl());
-			crawler.setInputYear(impl.getYear());
-			int producerCount = impl.getLinkGenerateWorkerCount();
-			int consumerCount = impl.getDownloadWorkerCount();							
-			impl.runCrawler(crawler, producerCount, consumerCount);
+			crawler.setInputYear(impl.getYear());							
+			impl.runCrawler(crawler, impl.getLinkGenerateWorkerCount(), impl.getDownloadWorkerCount());
 		}
 		
 	}

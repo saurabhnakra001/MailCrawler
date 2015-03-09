@@ -39,4 +39,12 @@ public class StringConstants {
 	
 	public static final String QUEUE_DAT_FILE = "queue.dat";
 	
+	public static final String CANNOT_COLLECT_LINKS = "Cannot process links. Please check if page is valid ...";
+	
+	public static final String INTERRUPT_ERROR = "Interrupt error ...";		
+	
+	public static final String EXECUTION_ERROR = "Execution error ...";	
+	
+	public static final String DISK_LOAD_ERROR = "Error loading queue from disk ...";
+	
 }

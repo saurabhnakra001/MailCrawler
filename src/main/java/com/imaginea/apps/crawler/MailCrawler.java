@@ -10,6 +10,8 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import static com.imaginea.apps.crawler.StringConstants.CHECK_URL_OR_INTERNET_CONNECTION;
+import static com.imaginea.apps.crawler.StringConstants.CANNOT_COLLECT_LINKS;;
 
 /** 
  * @author vamsi emani
@@ -35,12 +37,12 @@ public class MailCrawler extends AbstractMailCrawler {
 			HtmlPage resp = HTMLParser.parseHtml(page.getWebResponse(), webClient.getCurrentWindow());
 			pageLinks = processPage(resp, pageLinks);								
 		} catch (IOException e) {			
-			e.printStackTrace();
+			log.error(CANNOT_COLLECT_LINKS, e);
 		}					
 		return pageLinks;
 	}
 
-	public Queue<Link> processPage(HtmlPage page, Queue<Link> links){
+	private Queue<Link> processPage(HtmlPage page, Queue<Link> links){
 		for (HtmlAnchor anchor : page.getAnchors()) {
 			String href = anchor.getHrefAttribute();
 			if(getValidator().isValidPageLink(href)){
@@ -90,15 +92,15 @@ public class MailCrawler extends AbstractMailCrawler {
 	 * Validates whether the mail links for the specified month and year 
 	 * exists on the main page or not. 
 	 */
-	public boolean validateInput(String relativeUrl) {
+	private boolean validateInput(String relativeUrl) {
 		boolean isValid = false;
 		try {
 			isValid = webClient.getPage(getUrl()) != null;
 		}catch(UnknownHostException e){
-			log.error(StringConstants.CHECK_URL_OR_INTERNET_CONNECTION);
+			log.error(CHECK_URL_OR_INTERNET_CONNECTION);
 		}
 		catch (Exception e) {		
-			e.printStackTrace();
+			log.error(e);
 		} 
 		return isValid;
 	}
