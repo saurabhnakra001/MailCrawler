@@ -1,10 +1,8 @@
 package com.imaginea.apps.crawler;
 
-
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Future;
-
 import com.imaginea.apps.crawler.processor.MailSeedProcessor;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 

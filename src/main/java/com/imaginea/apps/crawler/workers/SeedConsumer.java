@@ -3,21 +3,13 @@ package com.imaginea.apps.crawler.workers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.NoRouteToHostException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-
-
-
 import org.apache.log4j.Logger;
-
 import com.imaginea.apps.crawler.MailSeed;
-import com.imaginea.apps.crawler.StringConstants;
-import com.imaginea.apps.crawler.exceptions.CannotConnectException;
 import com.imaginea.apps.crawler.exceptions.CrawlerException;
 import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;

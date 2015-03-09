@@ -10,7 +10,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.imaginea.apps.crawler.processor.MailSeedProcessor;
 
 /** 
  * @author vamsi emani
@@ -23,13 +22,7 @@ public class MailCrawler extends AbstractMailCrawler {
 		
 	private WebClient webClient = null;				
 	private static final Logger log = Logger.getLogger(MailCrawler.class);	
-			
-	public MailCrawler() {		
-		/*this.setProcessor(new MailSeedProcessor(this));	
-		this.setValidator(new Validator(this));
-		this.setHelper(new Helper(this));*/
-	}	
-		
+				
 	/**
 	 * Process the web page to load the list of mail messages loaded by js. 
 	 */

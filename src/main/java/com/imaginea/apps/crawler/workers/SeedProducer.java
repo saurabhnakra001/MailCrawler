@@ -2,33 +2,25 @@
 package com.imaginea.apps.crawler.workers;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.log4j.Logger;
-
 import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.imaginea.apps.crawler.Helper;
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
 import com.imaginea.apps.crawler.StringConstants;
-import com.imaginea.apps.crawler.Helper;
-import com.imaginea.apps.crawler.Validator;
 import com.imaginea.apps.crawler.exceptions.CannotConnectException;
 import com.imaginea.apps.crawler.exceptions.CrawlerException;
-import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.SeedProducerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 

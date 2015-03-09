@@ -9,13 +9,7 @@ import static com.imaginea.apps.crawler.StringConstants.INVALID_LINK_GENERATE_WO
 import static com.imaginea.apps.crawler.StringConstants.INVALID_NUM_WORKERS;
 import static com.imaginea.apps.crawler.StringConstants.NUM_DOWNLOAD_WORKERS;
 import static com.imaginea.apps.crawler.StringConstants.NUM_LINK_GENERATE_WORKERS;
-
 import java.util.Scanner;
-
-
-
-
-
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
