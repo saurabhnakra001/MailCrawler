@@ -35,8 +35,9 @@ public abstract class AbstractMailCrawler implements WebSpider {
 		getProcessor().generateSeeds(linkGenerateWorkerCount, pageLinks);
 	}		
 	
-	public List<Future<WorkerRecord>> download() {		
-		return getProcessor().downloadSeeds(getDownloadWorkerCount()); 		
+	public int download() {		
+		List<Future<WorkerRecord>> records = getProcessor().downloadSeeds(getDownloadWorkerCount());
+		return getProcessor().getDownloadCount(records);
 	}
 
 	public abstract Queue<Link> collectHyperlinks();					

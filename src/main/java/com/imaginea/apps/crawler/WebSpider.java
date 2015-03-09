@@ -3,6 +3,8 @@ package com.imaginea.apps.crawler;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.apache.bcel.generic.RETURN;
+
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
 /**
@@ -18,7 +20,9 @@ public interface WebSpider {
 	/** Any other validations for crawler **/
 	public boolean canCrawl();
 	
-	/** Implementation to download mail content in extracted link 
-	 * @return **/
-	public List<Future<WorkerRecord>> download();
+	/** 
+	 * Implementation to download mail content in extracted link.
+	 * returns downloaded file count
+	 **/	 
+	public int download();
 }

@@ -4,6 +4,7 @@ import static com.imaginea.apps.crawler.StringConstants.FILENAMES.QUEUE_DAT_FILE
 import static com.imaginea.apps.crawler.StringConstants.ERRORS.INTERRUPT_ERROR;
 import static com.imaginea.apps.crawler.StringConstants.ERRORS.EXECUTION_ERROR;
 import static com.imaginea.apps.crawler.StringConstants.ERRORS.DISK_LOAD_ERROR;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,13 +20,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import org.apache.log4j.Logger;
+
 import com.imaginea.apps.crawler.Link;
 import com.imaginea.apps.crawler.MailCrawler;
 import com.imaginea.apps.crawler.MailSeed;
 import com.imaginea.apps.crawler.exceptions.ConnectException;
 import com.imaginea.apps.crawler.workers.SeedConsumer;
 import com.imaginea.apps.crawler.workers.SeedProducer;
+import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
 
 /**
@@ -37,12 +41,9 @@ public class MailSeedProcessor implements SeedProcessor{
 	
 	/** Use a blocking queue to enable multi-threading in future and to withstand internet connection loss **/
 	private LinkedBlockingQueue<MailSeed> queue;	
-
-	private MailCrawler crawler;
-	
+	private MailCrawler crawler;			
+	private boolean resumeState = false;
 	private static final Logger log = Logger.getLogger(MailSeedProcessor.class);
-	
-	private boolean resumeState = false;		
 
 	public MailSeedProcessor(MailCrawler crawler) {
 		this.crawler = crawler;
@@ -153,7 +154,19 @@ public class MailSeedProcessor implements SeedProcessor{
 		for(Future<WorkerRecord> future : futures){
 		    log.info(future.get().status());
 		}
-	}		
+	}
+	
+	public int getDownloadCount(List<Future<WorkerRecord>> futures){
+		int count = 0 ;
+		for(Future<WorkerRecord> future : futures){
+		    try {
+				count = count + ((SeedConsumerRecord) future.get()).getDownloadedCount();
+			} catch (InterruptedException | ExecutionException e) {				
+				log.error(INTERRUPT_ERROR, e);
+			}
+		}
+		return count;
+	}
 			
 	public boolean isResumeState() {
 		return resumeState;

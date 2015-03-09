@@ -16,6 +16,10 @@ public class SeedConsumerRecord extends WorkerRecord{
 		download++;
 	}
 
+	public int getDownloadedCount(){
+		return download;
+	}
+	
 	public void failed(){
 		failed++;
 	}
