@@ -52,7 +52,7 @@ public class MailCrawlerImpl {
 	}
 	
 	public String readConsole(Object msg){
-		Scanner scanner = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in, "UTF-8");
 		System.out.println(msg);
 		return scanner.nextLine();
 	}

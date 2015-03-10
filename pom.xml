@@ -11,6 +11,21 @@
 	<jdk.version>1.7</jdk.version>
 	<spring.version>3.0.5.RELEASE</spring.version>
   </properties>    
+    
+   <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.1-SNAPSHOT</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <!-- Optional directory to put findbugs xdoc xml report -->
+          <xmlOutputDirectory>target/site</xmlOutputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   
   <dependencies>  
 	  <dependency>

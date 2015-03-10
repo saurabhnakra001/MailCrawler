@@ -63,7 +63,6 @@ public class MailCrawler extends AbstractMailCrawler {
 	 */
 	public void initializeWebClient(){
 		Config conf = new Config().load();		
-		Helper help = getHelper();
 		webClient = new WebClient(BrowserVersion.CHROME);		
 		webClient.getOptions().setTimeout(conf.timeout());		
 		webClient.waitForBackgroundJavaScript(conf.waitForBackgroundJavaScript());

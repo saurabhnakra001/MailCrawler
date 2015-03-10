@@ -57,8 +57,7 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 				log.info("\n>> DOWNLOADED FROM :\n\t"+url+ "\n\tto output/"+fileName);
 				rec.downloaded();																	
 			}
-		}catch(IOException e){
-			String msg = ". Unable to download : "+url;
+		}catch(IOException e){			
 			seed.setDownloadFailed();
 			((SeedConsumerRecord) record).failed();
 		}	

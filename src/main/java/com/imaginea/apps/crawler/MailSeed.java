@@ -68,13 +68,13 @@ public class MailSeed implements Serializable{
 		boolean isEqual= false;
 	    if (object != null && object instanceof MailSeed){
 	    	MailSeed obj = ((MailSeed) object);	    	
-	        isEqual = this.id == obj.id;
+	        isEqual = this.id.equals(obj.id);
 	    }
 	    return isEqual;
 	}
 	
 	@Override
 	public int hashCode() {		
-		return super.hashCode();
+		return this.id.hashCode();
 	}	
 }

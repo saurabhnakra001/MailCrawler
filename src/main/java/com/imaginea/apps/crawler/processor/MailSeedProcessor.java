@@ -1,6 +1,7 @@
 package com.imaginea.apps.crawler.processor;
 
 import static com.imaginea.apps.crawler.StringConstants.FILENAMES.QUEUE_DAT_FILE;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.DAT_FILE_DELETE_ERROR;
 import static com.imaginea.apps.crawler.StringConstants.ERRORS.INTERRUPT_ERROR;
 import static com.imaginea.apps.crawler.StringConstants.ERRORS.EXECUTION_ERROR;
 import static com.imaginea.apps.crawler.StringConstants.ERRORS.DISK_LOAD_ERROR;
@@ -8,6 +9,7 @@ import static com.imaginea.apps.crawler.StringConstants.ERRORS.DISK_LOAD_ERROR;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -140,12 +142,15 @@ public class MailSeedProcessor implements SeedProcessor{
 		    	setResumeState(true);
 		    ois.close();		    
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			queue = new LinkedBlockingQueue<MailSeed>();			
-		}finally{
+		}catch (ClassNotFoundException e) {
+			queue = new LinkedBlockingQueue<MailSeed>();			
+		}
+		finally{
 			File datFile = new File(QUEUE_DAT_FILE);
-			if(datFile.exists())
-				datFile.delete();
+			if(datFile.exists() && datFile.delete())
+				log.error(DAT_FILE_DELETE_ERROR);
 		}
 		return queue;
 	}
