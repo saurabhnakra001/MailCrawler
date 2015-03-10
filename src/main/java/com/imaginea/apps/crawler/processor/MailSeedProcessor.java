@@ -161,8 +161,10 @@ public class MailSeedProcessor implements SeedProcessor{
 		for(Future<WorkerRecord> future : futures){
 		    try {
 				count = count + ((SeedConsumerRecord) future.get()).getDownloadedCount();
-			} catch (InterruptedException | ExecutionException e) {				
+			} catch (InterruptedException e) {				
 				log.error(INTERRUPT_ERROR, e);
+			}catch(ExecutionException e){
+				log.error(EXECUTION_ERROR, e);
 			}
 		}
 		return count;

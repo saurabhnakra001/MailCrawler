@@ -61,6 +61,9 @@ public class MailCrawlerTest {
 		assertEquals(true, new File("output").exists());
 		File folder = new File("output/2014");
 		assertEquals(true, folder.exists() && folder.list().length == 12);
+		for(File mailMonthFolder : folder.listFiles()){
+			assertEquals(true, mailMonthFolder.list().length > 0);
+		}
 	}
 	
 	@Test(timeout=100000)
