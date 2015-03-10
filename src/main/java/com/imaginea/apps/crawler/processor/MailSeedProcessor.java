@@ -50,6 +50,7 @@ public class MailSeedProcessor implements SeedProcessor{
 	public MailSeedProcessor(MailCrawler crawler) {
 		this.crawler = crawler;
 		this.queue = reloadQueueFromDisk();
+		
 	}			
 	
 	public boolean hasSeeds(){
@@ -149,7 +150,7 @@ public class MailSeedProcessor implements SeedProcessor{
 		}
 		finally{
 			File datFile = new File(QUEUE_DAT_FILE);
-			if(datFile.exists() && datFile.delete())
+			if(datFile.exists() && !datFile.delete())
 				log.error(DAT_FILE_DELETE_ERROR);
 		}
 		return queue;
