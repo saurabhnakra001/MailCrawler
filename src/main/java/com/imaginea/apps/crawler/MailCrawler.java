@@ -10,8 +10,8 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.CHECK_URL_OR_INTERNET_CONNECTION;
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.CANNOT_COLLECT_LINKS;;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.check_url_internet_connection;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.cannot_collect_links;;
 
 /** 
  * @author vamsi emani
@@ -37,7 +37,7 @@ public class MailCrawler extends AbstractMailCrawler {
 			HtmlPage resp = HTMLParser.parseHtml(page.getWebResponse(), webClient.getCurrentWindow());
 			pageLinks = processPage(resp, pageLinks);								
 		} catch (IOException e) {			
-			log.error(CANNOT_COLLECT_LINKS, e);
+			log.error(cannot_collect_links, e);
 		}					
 		return pageLinks;
 	}
@@ -96,7 +96,7 @@ public class MailCrawler extends AbstractMailCrawler {
 		try {
 			isValid = webClient.getPage(getUrl()) != null;
 		}catch(UnknownHostException e){
-			log.error(CHECK_URL_OR_INTERNET_CONNECTION);
+			log.error(check_url_internet_connection);
 		}
 		catch (Exception e) {		
 			log.error(e);

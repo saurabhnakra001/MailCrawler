@@ -1,7 +1,7 @@
 package com.imaginea.apps.crawler;
 
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.DECODE_ERROR;
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.ENCODE_ERROR;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.decode_error;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.encode_error;
 import java.io.UnsupportedEncodingException;
 import org.apache.log4j.Logger;
 /**
@@ -23,7 +23,7 @@ public class Helper {
 		try {
 			result = java.net.URLDecoder.decode(encodedUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			log.error(DECODE_ERROR);
+			log.error(decode_error);
 		}
 		return result;
 	}
@@ -33,7 +33,7 @@ public class Helper {
 		try {
 			result = java.net.URLEncoder.encode(url, "UTF-8");
 		} catch (UnsupportedEncodingException e) {			
-			log.error(ENCODE_ERROR);
+			log.error(encode_error);
 		}
 		return result;
 	}

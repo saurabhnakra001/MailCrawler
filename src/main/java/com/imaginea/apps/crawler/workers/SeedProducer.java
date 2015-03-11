@@ -1,7 +1,7 @@
 
 package com.imaginea.apps.crawler.workers;
 
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.CHECK_INTERNET_CONNECTION;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.check_internet_connection;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Iterator;
@@ -62,11 +62,11 @@ public class SeedProducer implements Callable<WorkerRecord>{
 			}
 		}catch(RuntimeException e){
 			if(e.getCause() instanceof IOException || e.getCause() instanceof UnknownHostException)
-				throw new ConnectException(CHECK_INTERNET_CONNECTION, e.getCause());
+				throw new ConnectException(check_internet_connection, e.getCause());
 			else
 				throw new CrawlerException(e);
 		} catch (IOException e) {
-			throw new ConnectException(CHECK_INTERNET_CONNECTION, e.getCause());			
+			throw new ConnectException(check_internet_connection, e.getCause());			
 		} 
 	}
 	

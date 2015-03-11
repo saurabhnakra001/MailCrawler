@@ -1,14 +1,14 @@
 package com.imaginea.apps;
 
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.CANNOT_CRAWL;
-import static com.imaginea.apps.crawler.StringConstants.INPUTS.DEFAULT_INPUT_YEAR;
-import static com.imaginea.apps.crawler.StringConstants.INPUTS.ENTER_INPUT_YEAR;
-import static com.imaginea.apps.crawler.StringConstants.INPUTS.ENTER_URL;
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.INVALID_INPUT_YEAR;
-import static com.imaginea.apps.crawler.StringConstants.INPUTS.INVALID_LINK_GENERATE_WORKERS;
-import static com.imaginea.apps.crawler.StringConstants.ERRORS.INVALID_NUM_WORKERS;
-import static com.imaginea.apps.crawler.StringConstants.INPUTS.NUM_DOWNLOAD_WORKERS;
-import static com.imaginea.apps.crawler.StringConstants.INPUTS.NUM_LINK_GENERATE_WORKERS;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.cannot_crawl;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.default_input_year;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.enter_input_year;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.enter_url;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.invalid_year;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.invalid_linkgen_worker_count;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.invalid_download_worker_count;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.num_download_workers;
+import static com.imaginea.apps.crawler.StringConstants.INPUTS.num_linkgen_workers;
 import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -48,7 +48,7 @@ public class MailCrawlerImpl {
 		if(crawler.canCrawl())
 			crawler.crawl();
 		else
-			log.error(CANNOT_CRAWL);
+			log.error(cannot_crawl);
 	}
 	
 	public String readConsole(Object msg){
@@ -58,19 +58,19 @@ public class MailCrawlerImpl {
 	}
 	
 	public String getUrl(){
-		return readConsole(ENTER_URL);
+		return readConsole(enter_url);
 	}
 	
 	public String getYear(){
-		return Integer.toString(getIntegerInput(ENTER_INPUT_YEAR, INVALID_INPUT_YEAR));
+		return Integer.toString(getIntegerInput(enter_input_year, invalid_year));
 	}
 	
 	public int getDownloadWorkerCount(){
-		return getIntegerInput(NUM_DOWNLOAD_WORKERS, INVALID_NUM_WORKERS);
+		return getIntegerInput(num_download_workers, invalid_download_worker_count);
 	}
 	
 	public int getLinkGenerateWorkerCount(){
-		return getIntegerInput(NUM_LINK_GENERATE_WORKERS, INVALID_LINK_GENERATE_WORKERS);
+		return getIntegerInput(num_linkgen_workers, invalid_linkgen_worker_count);
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class MailCrawlerImpl {
 		try{
 			return Integer.parseInt(readConsole(msg));						
 		}catch(NumberFormatException e){
-			i = Integer.parseInt(DEFAULT_INPUT_YEAR);
+			i = Integer.parseInt(default_input_year);
 			log.info(exceptionMsg);					
 		}
 		return i;

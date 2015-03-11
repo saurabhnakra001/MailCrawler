@@ -13,6 +13,7 @@ import com.imaginea.apps.crawler.MailSeed;
 import com.imaginea.apps.crawler.exceptions.CrawlerException;
 import com.imaginea.apps.crawler.workers.records.SeedConsumerRecord;
 import com.imaginea.apps.crawler.workers.records.WorkerRecord;
+import static com.imaginea.apps.crawler.StringConstants.ERRORS.cannot_write_error;;
 
 /**
  * @author vamsi emani
@@ -33,7 +34,12 @@ public class SeedConsumer implements Callable<WorkerRecord>{
 		
 	private synchronized void download(String folder, String urlStr, String fileName) throws IOException{
 		URL url;		
-		new File(folder).mkdirs();
+		File folderFile = new File(folder);
+		boolean folderExists = folderFile.exists() || folderFile.mkdirs(); 			
+		if(!folderExists){
+			log.error(cannot_write_error);
+			return;
+		}
 		url = new URL(urlStr);
 		ReadableByteChannel rbc = Channels.newChannel(url.openStream());							
 		FileOutputStream fos = new FileOutputStream(new File(folder + File.separator + fileName));

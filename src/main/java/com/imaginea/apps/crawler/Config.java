@@ -1,6 +1,6 @@
 package com.imaginea.apps.crawler;
 
-import static com.imaginea.apps.crawler.StringConstants.FILENAMES.CONFIG_FILE;
+import static com.imaginea.apps.crawler.StringConstants.FILENAMES.config_file;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -22,7 +22,7 @@ public class Config {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		this.props = new Properties();
 		try {
-			InputStream resourceStream = loader.getResourceAsStream(CONFIG_FILE);
+			InputStream resourceStream = loader.getResourceAsStream(config_file);
 		    props.load(resourceStream);
 		} catch (IOException e) {			
 			log.error("Unable to load config.properties file");
