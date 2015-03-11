@@ -5,6 +5,9 @@ and downloads the mail contents into the output folder. User has the ability to 
 to generate links and download mails so as to improve the speed of processing. 
 The crawler can also withstand internet connection loss for a specified timeout. 
 
+###How it works 
+![Image](https://github.com/vamsi-emani/samples/blob/master/Design.png)
+
 ###How to run
   *  Download the zip from git and extract contents. 
   *  On shell/command prompt, change directory to the extracted folder. 
